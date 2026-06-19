@@ -1,5 +1,5 @@
 import { supabase } from './client';
-import { RideRequest, RideOffer, Ride, Payment } from '@types/index';
+import { RideRequest, RideOffer, Ride, Payment } from '@app-types/index';
 
 // Ride Request Methods
 export const createRideRequest = async (

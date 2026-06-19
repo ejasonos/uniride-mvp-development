@@ -1,5 +1,5 @@
 import { supabase } from './client';
-import { Message, Conversation } from '@types/index';
+import { Message, Conversation } from '@app-types/index';
 
 // Conversation Methods
 export const createConversation = async (

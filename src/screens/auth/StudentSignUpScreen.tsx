@@ -8,17 +8,15 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Button } from '@components/Button';
 import { Input } from '@components/Input';
 import { useAuthStore } from '@store/authStore';
 import { globalStyles } from '@styles/index';
 import { COLORS } from '@constants/index';
 
-interface StudentSignUpScreenProps {
-  navigation: any;
-}
-
-export const StudentSignUpScreen: React.FC<StudentSignUpScreenProps> = ({ navigation }) => {
+export const StudentSignUpScreen: React.FC = () => {
+  const router = useRouter();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -63,6 +61,7 @@ export const StudentSignUpScreen: React.FC<StudentSignUpScreenProps> = ({ naviga
 
     try {
       await signUp(email, password, fullName, phone, 'student');
+      router.replace('/student');
       Alert.alert('Success', 'Account created successfully!');
     } catch (error: any) {
       Alert.alert('Sign Up Failed', error.message || 'Unable to create account. Please try again.');
@@ -150,7 +149,7 @@ export const StudentSignUpScreen: React.FC<StudentSignUpScreenProps> = ({ naviga
           <Text style={styles.footerText}>Already have an account? </Text>
           <Button
             title="Sign In"
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => router.push('/auth/login')}
             variant="secondary"
             style={styles.signInButton}
             textStyle={styles.signInText}
@@ -205,7 +204,7 @@ const styles = StyleSheet.create({
   },
   signInButton: {
     paddingVertical: 0,
-    paddingHorizontal: 0,
+    paddingHorizontal: 10,
     marginVertical: 0,
   },
   signInText: {

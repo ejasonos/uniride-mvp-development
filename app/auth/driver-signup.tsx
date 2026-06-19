@@ -1,0 +1,1 @@
+export { DriverSignUpScreen as default } from '../../src/screens/auth/DriverSignUpScreen';

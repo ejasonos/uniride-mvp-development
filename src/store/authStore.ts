@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Profile } from '@types/index';
+import { Profile } from '@app-types/index';
 import * as authService from '@services/supabase/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

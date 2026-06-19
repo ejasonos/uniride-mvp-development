@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Message, Conversation } from '@types/index';
+import { Message, Conversation } from '@app-types/index';
 import * as chatService from '@services/supabase/chat';
 
 interface ChatState {

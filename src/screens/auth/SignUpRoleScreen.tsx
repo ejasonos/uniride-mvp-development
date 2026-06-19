@@ -6,16 +6,14 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Button } from '@components/Button';
 import { Card } from '@components/Card';
-import { globalStyles } from '@styles/index';
 import { COLORS } from '@constants/index';
 
-interface SignUpRoleScreenProps {
-  navigation: any;
-}
+export const SignUpRoleScreen: React.FC = () => {
+  const router = useRouter();
 
-export const SignUpRoleScreen: React.FC<SignUpRoleScreenProps> = ({ navigation }) => {
   return (
     <ScrollView
       contentContainerStyle={styles.scrollContent}
@@ -31,7 +29,7 @@ export const SignUpRoleScreen: React.FC<SignUpRoleScreenProps> = ({ navigation }
       <View style={styles.optionsContainer}>
         {/* Student Card */}
         <TouchableOpacity
-          onPress={() => navigation.navigate('StudentSignUp')}
+          onPress={() => router.push('/auth/student-signup')}
           activeOpacity={0.7}
         >
           <Card style={styles.optionCard}>
@@ -52,7 +50,7 @@ export const SignUpRoleScreen: React.FC<SignUpRoleScreenProps> = ({ navigation }
 
         {/* Driver Card */}
         <TouchableOpacity
-          onPress={() => navigation.navigate('DriverSignUp')}
+          onPress={() => router.push('/auth/driver-signup')}
           activeOpacity={0.7}
         >
           <Card style={styles.optionCard}>
@@ -77,7 +75,7 @@ export const SignUpRoleScreen: React.FC<SignUpRoleScreenProps> = ({ navigation }
         <Text style={styles.footerText}>Already have an account? </Text>
         <Button
           title="Sign In"
-          onPress={() => navigation.navigate('Login')}
+          onPress={() => router.push('/auth/login')}
           variant="secondary"
           style={styles.signInButton}
           textStyle={styles.signInText}
@@ -161,7 +159,7 @@ const styles = StyleSheet.create({
   },
   signInButton: {
     paddingVertical: 0,
-    paddingHorizontal: 0,
+    paddingHorizontal: 2,
     marginVertical: 0,
   },
   signInText: {

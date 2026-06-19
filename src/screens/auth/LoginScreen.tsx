@@ -8,18 +8,15 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { Button } from '@components/Button';
 import { Input } from '@components/Input';
 import { useAuthStore } from '@store/authStore';
 import { globalStyles } from '@styles/index';
 import { COLORS } from '@constants/index';
 
-interface LoginScreenProps {
-  navigation: any;
-}
-
-export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
+export const LoginScreen: React.FC = () => {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -49,6 +46,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
     try {
       await signIn(email, password);
+      router.replace('/');
     } catch (error: any) {
       Alert.alert('Login Failed', error.message || 'Unable to sign in. Please try again.');
     }
@@ -106,7 +104,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           <Text style={styles.footerText}>Don&apos;t have an account? </Text>
           <Button
             title="Sign Up"
-            onPress={() => navigation.navigate('SignUpRole')}
+            onPress={() => router.push('/auth/signup-role')}
             variant="secondary"
             style={styles.signUpButton}
             textStyle={styles.signUpText}

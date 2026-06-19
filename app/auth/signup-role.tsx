@@ -1,0 +1,1 @@
+export { SignUpRoleScreen as default } from '../../src/screens/auth/SignUpRoleScreen';

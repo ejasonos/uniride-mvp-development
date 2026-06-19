@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { RideRequest, RideOffer, Ride, Payment } from '@types/index';
+import { RideRequest, RideOffer, Ride, Payment } from '@app-types/index';
 import * as rideService from '@services/supabase/rides';
 
 interface RideState {

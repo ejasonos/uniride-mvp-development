@@ -1,0 +1,1 @@
+export { StudentSignUpScreen as default } from '../../src/screens/auth/StudentSignUpScreen';

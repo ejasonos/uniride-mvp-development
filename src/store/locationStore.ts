@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Location } from '@types/index';
+import { Location } from '@app-types/index';
 import * as supabase from '@services/supabase/client';
 
 interface LocationState {

@@ -7,25 +7,23 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  Picker,
 } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { useRouter } from 'expo-router';
 import { Button } from '@components/Button';
 import { Input } from '@components/Input';
 import { useAuthStore } from '@store/authStore';
 import { globalStyles } from '@styles/index';
 import { COLORS, VEHICLE_TYPES } from '@constants/index';
 
-interface DriverSignUpScreenProps {
-  navigation: any;
-}
-
-export const DriverSignUpScreen: React.FC<DriverSignUpScreenProps> = ({ navigation }) => {
+export function DriverSignUpScreen() {
+  const router = useRouter();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [vehicleType, setVehicleType] = useState(VEHICLE_TYPES[0]);
+  const [vehicleType, setVehicleType] = useState<string>(VEHICLE_TYPES[0]);
   const [vehicleRegistration, setVehicleRegistration] = useState('');
   const [universityId, setUniversityId] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -74,18 +72,12 @@ export const DriverSignUpScreen: React.FC<DriverSignUpScreenProps> = ({ navigati
     if (!validateForm()) return;
 
     try {
-      await signUp(
-        email,
-        password,
-        fullName,
-        phone,
-        'driver',
-        {
-          vehicle_type: vehicleType,
-          vehicle_registration: vehicleRegistration,
-          university_id: universityId,
-        }
-      );
+      await signUp(email, password, fullName, phone, 'driver', {
+        vehicle_type: vehicleType,
+        vehicle_registration: vehicleRegistration,
+        university_id: universityId,
+      });
+      router.replace('/driver');
       Alert.alert('Success', 'Account created successfully!');
     } catch (error: any) {
       Alert.alert('Sign Up Failed', error.message || 'Unable to create account. Please try again.');
@@ -143,7 +135,7 @@ export const DriverSignUpScreen: React.FC<DriverSignUpScreenProps> = ({ navigati
             <Text style={styles.label}>Vehicle Type</Text>
             <Picker
               selectedValue={vehicleType}
-              onValueChange={(itemValue) => setVehicleType(itemValue)}
+              onValueChange={(itemValue) => setVehicleType(itemValue as string)}
               style={styles.picker}
             >
               {VEHICLE_TYPES.map((type) => (
@@ -205,7 +197,7 @@ export const DriverSignUpScreen: React.FC<DriverSignUpScreenProps> = ({ navigati
           <Text style={styles.footerText}>Already have an account? </Text>
           <Button
             title="Sign In"
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => router.push('/auth/login')}
             variant="secondary"
             style={styles.signInButton}
             textStyle={styles.signInText}
