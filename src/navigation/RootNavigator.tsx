@@ -10,7 +10,15 @@ import { SignUpRoleScreen } from '@screens/auth/SignUpRoleScreen';
 import { StudentSignUpScreen } from '@screens/auth/StudentSignUpScreen';
 import { DriverSignUpScreen } from '@screens/auth/DriverSignUpScreen';
 import { StudentHomeScreen } from '@screens/student/StudentHomeScreen';
+import { RideRequestScreen } from '@screens/student/RideRequestScreen';
+import { RideOffersScreen } from '@screens/student/RideOffersScreen';
+import { NegotiationChatScreen } from '@screens/student/NegotiationChatScreen';
+import { RideTrackingScreen } from '@screens/student/RideTrackingScreen';
+import { PaymentScreen } from '@screens/student/PaymentScreen';
+import { RideHistoryScreen } from '@screens/student/RideHistoryScreen';
 import { DriverHomeScreen } from '@screens/driver/DriverHomeScreen';
+import { SubmitOfferScreen } from '@screens/driver/SubmitOfferScreen';
+import { DriverHistoryScreen } from '@screens/driver/DriverHistoryScreen';
 
 // Stores
 import { useAuthStore } from '@store/authStore';
@@ -43,6 +51,12 @@ const StudentStack = () => {
       }}
     >
       <Stack.Screen name="StudentHome" component={StudentHomeScreen} />
+      <Stack.Screen name="RideRequest" component={RideRequestScreen} />
+      <Stack.Screen name="RideOffers" component={RideOffersScreen} />
+      <Stack.Screen name="NegotiationChat" component={NegotiationChatScreen} />
+      <Stack.Screen name="RideTracking" component={RideTrackingScreen} />
+      <Stack.Screen name="Payment" component={PaymentScreen} />
+      <Stack.Screen name="RideHistory" component={RideHistoryScreen} />
     </Stack.Navigator>
   );
 };
@@ -55,6 +69,8 @@ const DriverStack = () => {
       }}
     >
       <Stack.Screen name="DriverHome" component={DriverHomeScreen} />
+      <Stack.Screen name="SubmitOffer" component={SubmitOfferScreen} />
+      <Stack.Screen name="DriverHistory" component={DriverHistoryScreen} />
     </Stack.Navigator>
   );
 };

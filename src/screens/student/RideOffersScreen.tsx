@@ -1,0 +1,168 @@
+import React, { useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
+import { Button } from '@components/Button';
+import { Card } from '@components/Card';
+import { useRideStore } from '@store/rideStore';
+import { globalStyles } from '@styles/index';
+import { COLORS } from '@constants/index';
+
+export const RideOffersScreen: React.FC = ({ navigation }: any) => {
+  const { currentRideRequest, rideOffers, isLoading, fetchRideOffers } = useRideStore();
+
+  useEffect(() => {
+    if (currentRideRequest?.id) {
+      fetchRideOffers(currentRideRequest.id);
+      const interval = setInterval(() => {
+        fetchRideOffers(currentRideRequest.id);
+      }, 5000); // Refresh every 5 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [currentRideRequest?.id]);
+
+  const handleSelectOffer = (offerId: string) => {
+    navigation.navigate('NegotiationChat', { rideOfferId: offerId });
+  };
+
+  const renderOfferCard = ({ item }: any) => (
+    <Card style={styles.offerCard}>
+      <View style={globalStyles.rowBetween}>
+        <Text style={globalStyles.heading3}>Driver Offer</Text>
+        <Text style={styles.price}>₦{item.offered_price.toLocaleString()}</Text>
+      </View>
+
+      <View style={styles.divider} />
+
+      {item.message && (
+        <View style={styles.messageContainer}>
+          <Text style={globalStyles.bodySmall}>Message from driver:</Text>
+          <Text style={styles.message}>{item.message}</Text>
+        </View>
+      )}
+
+      <View style={globalStyles.rowBetween} style={styles.buttonContainer}>
+        <Button
+          title="View Details"
+          onPress={() => handleSelectOffer(item.id)}
+          variant="primary"
+          style={styles.button}
+        />
+        <Button
+          title="Chat"
+          onPress={() => handleSelectOffer(item.id)}
+          variant="secondary"
+          style={styles.button}
+        />
+      </View>
+    </Card>
+  );
+
+  if (isLoading && rideOffers.length === 0) {
+    return (
+      <SafeAreaView style={globalStyles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Available Offers</Text>
+        </View>
+        <View style={globalStyles.columnCenter} style={styles.centerContent}>
+          <ActivityIndicator size="large" color={COLORS.PRIMARY} />
+          <Text style={[globalStyles.bodyMedium, styles.loadingText]}>Waiting for offers...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={globalStyles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Available Offers ({rideOffers.length})</Text>
+      </View>
+
+      <View style={styles.content}>
+        {rideOffers.length === 0 ? (
+          <View style={globalStyles.columnCenter} style={styles.centerContent}>
+            <Text style={globalStyles.bodyMedium}>No offers yet</Text>
+            <Text style={globalStyles.bodySmall}>Drivers will see your request shortly</Text>
+            <ActivityIndicator color={COLORS.PRIMARY} style={styles.spinner} />
+          </View>
+        ) : (
+          <FlatList
+            data={rideOffers}
+            keyExtractor={(item) => item.id}
+            renderItem={renderOfferCard}
+            scrollEnabled={false}
+            onEndReachedThreshold={0.8}
+          />
+        )}
+      </View>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  header: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: COLORS.PRIMARY,
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: COLORS.SECONDARY,
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  offerCard: {
+    marginBottom: 12,
+  },
+  price: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: COLORS.ACCENT,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: COLORS.GRAY,
+    marginVertical: 12,
+  },
+  messageContainer: {
+    marginBottom: 12,
+    backgroundColor: COLORS.LIGHT_GRAY,
+    padding: 10,
+    borderRadius: 6,
+  },
+  message: {
+    marginTop: 6,
+    color: COLORS.TEXT_PRIMARY,
+    fontWeight: '500',
+  },
+  buttonContainer: {
+    gap: 8,
+  },
+  button: {
+    flex: 1,
+  },
+  loadingText: {
+    marginTop: 12,
+  },
+  spinner: {
+    marginTop: 16,
+  },
+});
