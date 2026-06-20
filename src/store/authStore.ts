@@ -40,19 +40,31 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       set({ isLoading: true });
 
-      // Check current session
       const { session } = await authService.getCurrentSession();
 
+
       if (session?.user) {
-        // Get user profile
-        const { profile } = await authService.getProfile(session.user.id);
-        set({ user: profile, isLoading: false, isInitialized: true });
+
+        const { profile } = await authService.getProfile(
+          session.user.id
+        );
+        set({
+          user: profile,
+          isLoading: false,
+          isInitialized: true,
+        });
       } else {
-        set({ user: null, isLoading: false, isInitialized: true });
+        set({
+          user: null,
+          isLoading: false,
+          isInitialized: true,
+        });
       }
-    } catch (error: any) {
+
+    } catch (error) {
+      console.log("AUTH ERROR:", error);
+
       set({
-        error: error?.message || 'Failed to initialize auth',
         isLoading: false,
         isInitialized: true,
       });
@@ -79,11 +91,17 @@ export const useAuthStore = create<AuthState>((set) => ({
         additionalData
       );
 
+
       if (error) throw error;
 
+      // IMPORTANT: do NOT assume login
+      return {
+        needsEmailVerification: true,
+      };
+
       // Get profile
-      const { profile } = await authService.getProfile(user!.id);
-      set({ user: profile, isLoading: false });
+      // const { profile } = await authService.getProfile(user!.id);
+      // set({ user: profile, isLoading: false });
     } catch (error: any) {
       set({
         error: error?.message || 'Sign up failed',
@@ -97,9 +115,13 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       set({ isLoading: true, error: null });
 
-      const { user, error } = await authService.signIn(email, password);
+      const { user, session, error } = await authService.signIn(email, password);
 
       if (error) throw error;
+
+      if (!session) {
+        throw new Error("Please confirm your email before logging in");
+      }
 
       // Get profile
       const { profile } = await authService.getProfile(user!.id);

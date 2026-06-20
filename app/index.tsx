@@ -1,26 +1,75 @@
 import React, { useEffect } from 'react';
-import { useRouter } from 'expo-router';
-import { SplashScreen } from '../src/screens/SplashScreen';
-import { useAuthStore } from '../src/store/authStore';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+} from 'react-native';
+import { router } from 'expo-router';
+import { useAuthStore } from '@store/authStore';
+import { COLORS } from '@constants/index';
 
-export default function IndexRoute() {
-  const router = useRouter();
-  const { user, isInitialized, initializeAuth } = useAuthStore();
+export default function Index() {
+  const {
+    initializeAuth,
+    isInitialized,
+    user,
+  } = useAuthStore();
 
   useEffect(() => {
-    void initializeAuth();
-  }, [initializeAuth]);
+    initializeAuth();
+  }, []);
 
   useEffect(() => {
     if (!isInitialized) return;
+
+    console.log('AUTH INITIALIZED');
+    console.log('USER:', user);
 
     if (!user) {
       router.replace('/auth/login');
       return;
     }
 
-    router.replace(user.role === 'student' ? '/student' : '/driver');
-  }, [isInitialized, router, user]);
+    if (user.role === 'driver') {
+      router.replace('/driver');
+      return;
+    }
 
-  return <SplashScreen />;
+    router.replace('/student');
+  }, [isInitialized, user]);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.logo}>UniRide</Text>
+
+      <ActivityIndicator
+        size="large"
+        color={COLORS.PRIMARY}
+      />
+
+      <Text style={styles.subtitle}>
+        Loading...
+      </Text>
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.SECONDARY,
+  },
+  logo: {
+    fontSize: 36,
+    fontWeight: '700',
+    color: COLORS.PRIMARY,
+    marginBottom: 24,
+  },
+  subtitle: {
+    marginTop: 16,
+    color: COLORS.TEXT_SECONDARY,
+  },
+});

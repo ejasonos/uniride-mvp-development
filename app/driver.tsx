@@ -1,1 +1,0 @@
-export { DriverHomeScreen as default } from '../src/screens/driver/DriverHomeScreen';
