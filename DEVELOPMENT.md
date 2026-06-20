@@ -18,7 +18,7 @@ This guide outlines the remaining features to implement for the MVP.
 
 ### 1. Student Home Screen
 
-**File**: `src/screens/student/StudentHomeScreen.tsx`
+**File**: `app/student/index.tsx`
 
 **Components needed**:
 - Search input for destination
@@ -43,7 +43,7 @@ This guide outlines the remaining features to implement for the MVP.
 
 ### 2. Ride Request Screen
 
-**File**: `src/screens/student/RideRequestScreen.tsx`
+**File**: `app/student/ride-request.tsx`
 
 **Components needed**:
 - Pickup location (autocomplete or map tap)
@@ -72,7 +72,7 @@ StudentHome (tap "Request Ride")
 
 ### 3. Offers List Screen
 
-**File**: `src/screens/student/OffersListScreen.tsx`
+**File**: `app/student/ride-offers.tsx`
 
 **Components needed**:
 - List of ride offers from drivers
@@ -97,7 +97,7 @@ StudentHome (tap "Request Ride")
 
 ### 4. Negotiation Chat Screen
 
-**File**: `src/screens/chat/NegotiationChatScreen.tsx`
+**File**: `app/student/negotiation-chat.tsx`
 
 **Components needed**:
 - Message list (scrollable)
@@ -126,7 +126,7 @@ StudentHome (tap "Request Ride")
 
 ### 5. Ride Tracking Screen
 
-**File**: `src/screens/student/TrackingScreen.tsx`
+**File**: `app/student/ride-tracking.tsx`
 
 **Components needed**:
 - Map showing driver and student locations
@@ -153,7 +153,7 @@ StudentHome (tap "Request Ride")
 
 ### 6. Payment Screen
 
-**File**: `src/screens/student/PaymentScreen.tsx`
+**File**: `app/student/payment.tsx`
 
 **Components needed**:
 - Ride summary (pickup, destination, price)
@@ -178,7 +178,7 @@ StudentHome (tap "Request Ride")
 
 ### 7. Student Ride History Screen
 
-**File**: `src/screens/student/RideHistoryScreen.tsx`
+**File**: `app/student/history.tsx`
 
 **Components needed**:
 - List of completed rides
@@ -199,7 +199,7 @@ StudentHome (tap "Request Ride")
 
 ### 8. Driver Home Screen
 
-**File**: `src/screens/driver/DriverHomeScreen.tsx` (update existing)
+**File**: `app/driver/index.tsx` (update existing)
 
 **Components needed**:
 - Online/Offline toggle
@@ -225,7 +225,7 @@ StudentHome (tap "Request Ride")
 
 ### 9. Driver Offers Screen
 
-**File**: `src/screens/driver/OfferSubmissionScreen.tsx`
+**File**: `app/driver/submit-offer.tsx`
 
 **Components needed**:
 - Ride request details
@@ -250,7 +250,7 @@ StudentHome (tap "Request Ride")
 
 ### 10. Driver Ride History Screen
 
-**File**: `src/screens/driver/DriverRideHistoryScreen.tsx`
+**File**: `app/driver/history.tsx`
 
 **Components needed**:
 - List of completed rides
