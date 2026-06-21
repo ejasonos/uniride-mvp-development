@@ -9,88 +9,87 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+
 import { useAuthStore } from '@store/authStore';
 import { useChatStore } from '@store/chatStore';
 import { useRideStore } from '@store/rideStore';
-import { globalStyles } from '@styles/index';
+
+import { createGlobalStyles } from '@styles/index';
+import { useThemeStore } from '@store/themeStore';
 import { COLORS } from '@constants/index';
 
 export default function NegotiationChatScreen() {
   const router = useRouter();
-  const { rideOfferId } = useLocalSearchParams<{ rideOfferId?: string | string[] }>();
-  const resolvedRideOfferId = Array.isArray(rideOfferId) ? rideOfferId[0] : rideOfferId;
+  const { rideOfferId } = useLocalSearchParams();
+
   const { user } = useAuthStore();
   const { conversations, messages, sendMessage, subscribeToMessages } = useChatStore();
   const { rideOffers, createRide } = useRideStore();
-  const [messageText, setMessageText] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const flatListRef = useRef<FlatList>(null);
 
-  const currentOffer = rideOffers.find((o) => o.id === resolvedRideOfferId);
-  const conversation = conversations.find((c) => c.ride_request_id === currentOffer?.ride_request_id);
-  const conversationMessages = messages.filter((m) => m.conversation_id === conversation?.id) || [];
+  const [text, setText] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const listRef = useRef<FlatList>(null);
+
+  const offer = rideOffers.find((o) => o.id === rideOfferId);
+  const convo = conversations.find((c) => c.ride_request_id === offer?.ride_request_id);
+
+  const convoMessages =
+    messages.filter((m) => m.conversation_id === convo?.id) || [];
+
+
+  const isDark = useThemeStore((s) => s.isDark);
+  const globalStyles = createGlobalStyles(isDark);
 
   useEffect(() => {
-    if (conversation?.id) {
-      subscribeToMessages(conversation.id);
-    }
-  }, [conversation?.id]);
+    if (convo?.id) subscribeToMessages(convo.id);
+  }, [convo?.id]);
 
   useEffect(() => {
-    if (conversationMessages.length > 0) {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }
-  }, [conversationMessages]);
+    listRef.current?.scrollToEnd({ animated: true });
+  }, [convoMessages]);
 
-  const handleSendMessage = async () => {
-    if (!messageText.trim() || !conversation?.id || !user?.id) return;
+  const send = async () => {
+    if (!text.trim() || !convo?.id || !user?.id) return;
 
-    try {
-      const message = messageText.trim();
-      setMessageText('');
+    const msg = text.trim();
+    setText('');
 
-      await sendMessage(conversation.id, user.id, message);
-    } catch (error: any) {
-      Alert.alert('Error', 'Failed to send message');
-    }
+    await sendMessage(convo.id, user.id, msg);
   };
 
-  const handleAcceptOffer = async () => {
+  const acceptOffer = async () => {
+    if (!offer || !user?.id) return;
+
+    setLoading(true);
+
     try {
-      if (!currentOffer || !user?.id) return;
-
-      setIsLoading(true);
-
       await createRide(
-        currentOffer.ride_request_id,
+        offer.ride_request_id,
         user.id,
-        currentOffer.driver_id,
-        currentOffer.offered_price
+        offer.driver_id,
+        offer.offered_price
       );
 
-      Alert.alert('Success', 'Offer accepted! Proceeding to tracking.');
-      router.push('/student/ride-tracking');
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to accept offer');
+      router.replace('/student/ride-tracking');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   const renderMessage = ({ item }: any) => {
-    const isOwnMessage = item.sender_id === user?.id;
+    const mine = item.sender_id === user?.id;
 
     return (
-      <View style={[styles.messageRow, isOwnMessage && styles.ownMessageRow]}>
-        <View style={[styles.messageBubble, isOwnMessage && styles.ownMessageBubble]}>
-          <Text style={[globalStyles.bodyMedium, isOwnMessage && styles.ownMessageText]}>
+      <View style={[globalStyles.container, styles.msgRow, mine && styles.msgRowRight]}>
+        <View style={[styles.bubble, mine && styles.bubbleMine]}>
+          <Text style={[styles.msgText, mine && styles.msgTextMine]}>
             {item.message}
           </Text>
-          <Text style={[styles.timestamp, isOwnMessage && styles.ownTimestamp]}>
+          <Text style={[styles.time, mine && styles.timeMine]}>
             {new Date(item.created_at).toLocaleTimeString([], {
               hour: '2-digit',
               minute: '2-digit',
@@ -102,178 +101,212 @@ export default function NegotiationChatScreen() {
   };
 
   return (
-    <SafeAreaView style={globalStyles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Negotiate with Driver</Text>
-        <Text style={styles.price}>₦{currentOffer?.offered_price.toLocaleString()}</Text>
+    <SafeAreaView style={styles.container}>
+
+      {/* TOP CONTEXT BAR (Uber-style) */}
+      <View style={styles.offerBar}>
+        <Text style={styles.offerLabel}>Driver Offer</Text>
+        <Text style={styles.offerPrice}>
+          ₦{offer?.offered_price?.toLocaleString()}
+        </Text>
       </View>
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.content}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.flex}
       >
+
+        {/* CHAT AREA */}
         <FlatList
-          ref={flatListRef}
-          data={conversationMessages}
-          keyExtractor={(item) => item.id}
+          ref={listRef}
+          data={convoMessages}
+          keyExtractor={(i) => i.id}
           renderItem={renderMessage}
-          contentContainerStyle={styles.messageList}
+          contentContainerStyle={styles.chat}
           ListEmptyComponent={
-            <View style={styles.emptyState}>
-              <Text style={globalStyles.bodyMedium}>Start the conversation</Text>
-              <Text style={globalStyles.bodySmall}>You can negotiate the price or ask questions</Text>
+            <View style={styles.empty}>
+              <Text style={styles.emptyTitle}>Start negotiation</Text>
+              <Text style={styles.emptySub}>
+                Discuss price or ask the driver questions
+              </Text>
             </View>
           }
         />
 
-        <View style={styles.inputContainer}>
+        {/* INPUT (Claude-style minimal floating bar) */}
+        <View style={styles.inputBar}>
           <TextInput
+            value={text}
+            onChangeText={setText}
+            placeholder="Message driver..."
+            placeholderTextColor="#999"
             style={styles.input}
-            placeholder="Type a message..."
-            placeholderTextColor={COLORS.GRAY}
-            value={messageText}
-            onChangeText={setMessageText}
             multiline
-            maxLength={500}
           />
+
           <TouchableOpacity
-            style={[styles.sendButton, !messageText.trim() && styles.sendButtonDisabled]}
-            onPress={handleSendMessage}
-            disabled={!messageText.trim()}
+            onPress={send}
+            disabled={!text.trim()}
+            style={[styles.sendBtn, !text.trim() && styles.disabled]}
           >
-            <Text style={styles.sendButtonText}>Send</Text>
+            <Text style={styles.sendText}>Send</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.actionContainer}>
+        {/* DECISION CTA */}
+        <View style={styles.ctaBar}>
           <TouchableOpacity
-            style={[styles.acceptButton, isLoading && styles.acceptButtonDisabled]}
-            onPress={handleAcceptOffer}
-            disabled={isLoading}
+            onPress={acceptOffer}
+            disabled={loading}
+            style={styles.acceptBtn}
           >
-            {isLoading ? (
-              <ActivityIndicator color={COLORS.SECONDARY} />
+            {loading ? (
+              <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.acceptButtonText}>Accept This Offer</Text>
+              <Text style={styles.acceptText}>Accept Offer</Text>
             )}
           </TouchableOpacity>
         </View>
+
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+
+  container: {
+    flex: 1,
+    backgroundColor: '#F6F7F9',
+  },
+
+  flex: {
+    flex: 1,
+  },
+
+  /* OFFER BAR (Uber negotiation header) */
+  offerBar: {
+    padding: 14,
     backgroundColor: COLORS.PRIMARY,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: COLORS.SECONDARY,
+  offerLabel: {
+    color: '#fff',
+    fontSize: 13,
+    opacity: 0.9,
   },
-  price: {
+  offerPrice: {
+    color: COLORS.ACCENT,
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.ACCENT,
   },
-  content: {
-    flex: 1,
+
+  /* CHAT */
+  chat: {
+    padding: 14,
+    paddingBottom: 80,
   },
-  messageList: {
-    flexGrow: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-  },
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  messageRow: {
-    marginVertical: 6,
+
+  msgRow: {
+    marginBottom: 10,
     alignItems: 'flex-start',
   },
-  ownMessageRow: {
+  msgRowRight: {
     alignItems: 'flex-end',
   },
-  messageBubble: {
-    backgroundColor: COLORS.LIGHT_GRAY,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
-    maxWidth: '85%',
+
+  bubble: {
+    backgroundColor: '#fff',
+    padding: 12,
+    borderRadius: 14,
+    maxWidth: '80%',
   },
-  ownMessageBubble: {
+  bubbleMine: {
     backgroundColor: COLORS.PRIMARY,
   },
-  ownMessageText: {
-    color: COLORS.SECONDARY,
+
+  msgText: {
+    fontSize: 14,
+    color: COLORS.TEXT_PRIMARY,
   },
-  timestamp: {
+  msgTextMine: {
+    color: '#fff',
+  },
+
+  time: {
     fontSize: 10,
-    color: COLORS.TEXT_SECONDARY,
     marginTop: 4,
+    color: '#888',
   },
-  ownTimestamp: {
-    color: COLORS.SECONDARY,
+  timeMine: {
+    color: 'rgba(255,255,255,0.7)',
   },
-  inputContainer: {
+
+  /* EMPTY STATE (Claude-like minimal tone) */
+  empty: {
+    marginTop: 80,
+    alignItems: 'center',
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  emptySub: {
+    fontSize: 13,
+    marginTop: 6,
+    color: '#777',
+    textAlign: 'center',
+  },
+
+  /* INPUT (Claude floating composer style) */
+  inputBar: {
     flexDirection: 'row',
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    padding: 10,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderColor: '#eee',
+    alignItems: 'flex-end',
     gap: 8,
-    backgroundColor: COLORS.LIGHT_GRAY,
   },
   input: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: COLORS.GRAY,
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    color: COLORS.TEXT_PRIMARY,
+    fontSize: 14,
     maxHeight: 100,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: '#F2F3F5',
+    borderRadius: 12,
   },
-  sendButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+  sendBtn: {
     backgroundColor: COLORS.PRIMARY,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 10,
   },
-  sendButtonDisabled: {
-    opacity: 0.5,
-  },
-  sendButtonText: {
-    color: COLORS.SECONDARY,
+  sendText: {
+    color: '#fff',
     fontWeight: '600',
   },
-  actionContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.GRAY,
-    backgroundColor: COLORS.LIGHT_GRAY,
+  disabled: {
+    opacity: 0.4,
   },
-  acceptButton: {
-    paddingVertical: 14,
+
+  /* CTA (Uber decision layer) */
+  ctaBar: {
+    padding: 12,
+    backgroundColor: '#fff',
+  },
+  acceptBtn: {
     backgroundColor: COLORS.ACCENT,
-    borderRadius: 8,
+    paddingVertical: 14,
+    borderRadius: 12,
     alignItems: 'center',
   },
-  acceptButtonDisabled: {
-    opacity: 0.6,
-  },
-  acceptButtonText: {
-    color: COLORS.TEXT_PRIMARY,
+  acceptText: {
     fontWeight: '700',
-    fontSize: 16,
+    fontSize: 15,
+    color: COLORS.TEXT_PRIMARY,
   },
 });

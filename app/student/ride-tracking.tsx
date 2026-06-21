@@ -15,21 +15,26 @@ import { Card } from '@components/Card';
 import { useRideStore } from '@store/rideStore';
 import { useLocationStore } from '@store/locationStore';
 import { useAuthStore } from '@store/authStore';
-import { globalStyles } from '@styles/index';
+import { createGlobalStyles } from '@styles/index';
+import { useThemeStore } from '@store/themeStore';
 import { COLORS } from '@constants/index';
 
 export default function RideTrackingScreen() {
   const router = useRouter();
   const { currentRide, updateRideStatus, isLoading } = useRideStore();
-  const { driverLocation, subscribeToLocation, updateLocation } = useLocationStore();
+  const { driverLocation, subscribeToDriverLocation, updateDriverLocation } = useLocationStore();
   const { user } = useAuthStore();
   const [mapReady, setMapReady] = useState(false);
+  const isDark = useThemeStore((s) => s.isDark);
+  const globalStyles = createGlobalStyles(isDark);
 
   useEffect(() => {
-    if (currentRide?.id) {
-      subscribeToLocation(currentRide.driver_id);
+    if (currentRide?.driver_id) {
+      subscribeToDriverLocation(currentRide.driver_id, (location) => {
+        updateDriverLocation(location);
+      });
     }
-  }, [currentRide?.id]);
+  }, [currentRide?.driver_id]);
 
   const handleCompleteRide = async () => {
     try {
@@ -39,7 +44,7 @@ export default function RideTrackingScreen() {
         'Complete Ride',
         'Mark this ride as complete?',
         [
-          { text: 'Cancel', onPress: () => {} },
+          { text: 'Cancel', onPress: () => { } },
           {
             text: 'Complete',
             onPress: async () => {
@@ -88,7 +93,7 @@ export default function RideTrackingScreen() {
             )}
           </MapView>
         ) : (
-          <View style={globalStyles.columnCenter} style={styles.mapPlaceholder}>
+          <View style={[globalStyles.columnCenter, styles.mapPlaceholder]}>
             <ActivityIndicator color={COLORS.PRIMARY} />
             <Text style={globalStyles.bodySmall}>Loading map...</Text>
           </View>

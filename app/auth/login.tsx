@@ -12,7 +12,8 @@ import { useRouter } from 'expo-router';
 import { Button } from '@components/Button';
 import { Input } from '@components/Input';
 import { useAuthStore } from '@store/authStore';
-import { globalStyles } from '@styles/index';
+import { useThemeStore } from '@store/themeStore';
+import { createGlobalStyles } from '@styles/index';
 import { COLORS } from '@constants/index';
 
 export default function LoginScreeen() {
@@ -21,6 +22,9 @@ export default function LoginScreeen() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { signIn, isLoading } = useAuthStore();
+
+  const isDark = useThemeStore((s) => s.isDark);
+  const globalStyles = createGlobalStyles(isDark);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -46,7 +50,8 @@ export default function LoginScreeen() {
 
     try {
       await signIn(email, password);
-      router.replace('/');
+      console.log("signin successful")
+      router.replace('/student');
     } catch (error: any) {
       const msg = error.message;
 
@@ -169,7 +174,7 @@ const styles = StyleSheet.create({
   },
   signUpButton: {
     paddingVertical: 0,
-    paddingHorizontal: 0,
+    paddingHorizontal: 15,
     marginVertical: 0,
   },
   signUpText: {

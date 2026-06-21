@@ -1,222 +1,451 @@
+// import { StyleSheet } from 'react-native';
+// import { COLORS } from '@constants/index';
+
+// export const globalStyles = StyleSheet.create({
+//   // Containers
+//   container: {
+//     flex: 1,
+//     backgroundColor: COLORS.SECONDARY,
+//   },
+
+//   containerPadded: {
+//     flex: 1,
+//     backgroundColor: COLORS.SECONDARY,
+//     paddingHorizontal: 16,
+//     paddingVertical: 16,
+//   },
+
+//   // Layout
+//   row: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//   },
+
+//   rowBetween: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     alignItems: 'center',
+//   },
+
+//   rowCenter: {
+//     flexDirection: 'row',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+
+//   column: {
+//     flexDirection: 'column',
+//   },
+
+//   columnCenter: {
+//     flexDirection: 'column',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+
+//   // Spacing
+//   marginVertical: {
+//     marginVertical: 8,
+//   },
+
+//   marginVerticalLarge: {
+//     marginVertical: 16,
+//   },
+
+//   marginHorizontal: {
+//     marginHorizontal: 8,
+//   },
+
+//   paddingVertical: {
+//     paddingVertical: 8,
+//   },
+
+//   paddingVerticalLarge: {
+//     paddingVertical: 16,
+//   },
+
+//   paddingHorizontal: {
+//     paddingHorizontal: 8,
+//   },
+
+//   // Typography
+//   heading1: {
+//     fontSize: 28,
+//     fontWeight: '700',
+//     color: COLORS.TEXT_PRIMARY,
+//   },
+
+//   heading2: {
+//     fontSize: 24,
+//     fontWeight: '700',
+//     color: COLORS.TEXT_PRIMARY,
+//   },
+
+//   heading3: {
+//     fontSize: 20,
+//     fontWeight: '600',
+//     color: COLORS.TEXT_PRIMARY,
+//   },
+
+//   bodyLarge: {
+//     fontSize: 16,
+//     fontWeight: '400',
+//     color: COLORS.TEXT_PRIMARY,
+//     lineHeight: 24,
+//   },
+
+//   bodyMedium: {
+//     fontSize: 14,
+//     fontWeight: '400',
+//     color: COLORS.TEXT_PRIMARY,
+//     lineHeight: 20,
+//   },
+
+//   bodySmall: {
+//     fontSize: 12,
+//     fontWeight: '400',
+//     color: COLORS.TEXT_SECONDARY,
+//     lineHeight: 18,
+//   },
+
+//   label: {
+//     fontSize: 12,
+//     fontWeight: '600',
+//     color: COLORS.TEXT_SECONDARY,
+//     textTransform: 'uppercase',
+//   },
+
+//   // Buttons
+//   button: {
+//     paddingVertical: 12,
+//     paddingHorizontal: 24,
+//     borderRadius: 8,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     minHeight: 48,
+//   },
+
+//   buttonPrimary: {
+//     backgroundColor: COLORS.PRIMARY,
+//   },
+
+//   buttonSecondary: {
+//     backgroundColor: COLORS.LIGHT_GRAY,
+//   },
+
+//   buttonText: {
+//     fontSize: 16,
+//     fontWeight: '600',
+//     color: COLORS.SECONDARY,
+//   },
+
+//   buttonTextSecondary: {
+//     fontSize: 16,
+//     fontWeight: '600',
+//     color: COLORS.TEXT_PRIMARY,
+//   },
+
+//   // Inputs
+//   input: {
+//     borderWidth: 1,
+//     borderColor: COLORS.GRAY,
+//     borderRadius: 8,
+//     paddingVertical: 12,
+//     paddingHorizontal: 12,
+//     fontSize: 14,
+//     color: COLORS.TEXT_PRIMARY,
+//     marginVertical: 8,
+//   },
+
+//   inputLabel: {
+//     fontSize: 14,
+//     fontWeight: '600',
+//     color: COLORS.TEXT_PRIMARY,
+//     marginBottom: 4,
+//   },
+
+//   inputError: {
+//     borderColor: COLORS.ERROR,
+//     borderWidth: 1,
+//   },
+
+//   errorText: {
+//     fontSize: 12,
+//     color: COLORS.ERROR,
+//     marginTop: 4,
+//   },
+
+//   // Cards
+//   card: {
+//     backgroundColor: COLORS.SECONDARY,
+//     borderRadius: 12,
+//     padding: 12,
+//     marginVertical: 8,
+//     elevation: 2,
+//     shadowColor: COLORS.DARK,
+//     shadowOffset: { width: 0, height: 2 },
+//     shadowOpacity: 0.1,
+//     shadowRadius: 4,
+//   },
+
+//   // Dividers
+//   divider: {
+//     height: 1,
+//     backgroundColor: COLORS.GRAY,
+//     marginVertical: 12,
+//   },
+
+//   // Header
+//   header: {
+//     paddingHorizontal: 16,
+//     paddingVertical: 12,
+//     backgroundColor: COLORS.PRIMARY,
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     alignItems: 'center',
+//   },
+
+//   headerText: {
+//     fontSize: 20,
+//     fontWeight: '700',
+//     color: COLORS.SECONDARY,
+//   },
+
+//   // Maps
+//   mapContainer: {
+//     flex: 1,
+//   },
+
+//   map: {
+//     ...StyleSheet.absoluteFillObject,
+//   },
+// });
 import { StyleSheet } from 'react-native';
 import { COLORS } from '@constants/index';
 
-export const globalStyles = StyleSheet.create({
-  // Containers
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.SECONDARY,
-  },
-  
-  containerPadded: {
-    flex: 1,
-    backgroundColor: COLORS.SECONDARY,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-  },
+export const createGlobalStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: isDark ? '#0B0F14' : COLORS.SECONDARY,
+    },
 
-  // Layout
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
+    textPrimary: {
+      color: isDark ? '#FFFFFF' : COLORS.TEXT_PRIMARY,
+    },
 
-  rowBetween: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
+    textSecondary: {
+      color: isDark ? '#A0A0A0' : COLORS.TEXT_SECONDARY,
+    },
+    containerPadded: {
+      flex: 1,
+      backgroundColor: COLORS.SECONDARY,
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+    },
 
-  rowCenter: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+    // Layout
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
 
-  column: {
-    flexDirection: 'column',
-  },
+    rowBetween: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
 
-  columnCenter: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+    rowCenter: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
 
-  // Spacing
-  marginVertical: {
-    marginVertical: 8,
-  },
+    column: {
+      flexDirection: 'column',
+    },
 
-  marginVerticalLarge: {
-    marginVertical: 16,
-  },
+    columnCenter: {
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
 
-  marginHorizontal: {
-    marginHorizontal: 8,
-  },
+    // Spacing
+    marginVertical: {
+      marginVertical: 8,
+    },
 
-  paddingVertical: {
-    paddingVertical: 8,
-  },
+    marginVerticalLarge: {
+      marginVertical: 16,
+    },
 
-  paddingVerticalLarge: {
-    paddingVertical: 16,
-  },
+    marginHorizontal: {
+      marginHorizontal: 8,
+    },
 
-  paddingHorizontal: {
-    paddingHorizontal: 8,
-  },
+    paddingVertical: {
+      paddingVertical: 8,
+    },
 
-  // Typography
-  heading1: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: COLORS.TEXT_PRIMARY,
-  },
+    paddingVerticalLarge: {
+      paddingVertical: 16,
+    },
 
-  heading2: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: COLORS.TEXT_PRIMARY,
-  },
+    paddingHorizontal: {
+      paddingHorizontal: 8,
+    },
 
-  heading3: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: COLORS.TEXT_PRIMARY,
-  },
+    // Typography
+    heading1: {
+      fontSize: 28,
+      fontWeight: '700',
+      color: COLORS.TEXT_PRIMARY,
+    },
 
-  bodyLarge: {
-    fontSize: 16,
-    fontWeight: '400',
-    color: COLORS.TEXT_PRIMARY,
-    lineHeight: 24,
-  },
+    heading2: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: COLORS.TEXT_PRIMARY,
+    },
 
-  bodyMedium: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: COLORS.TEXT_PRIMARY,
-    lineHeight: 20,
-  },
+    heading3: {
+      fontSize: 20,
+      fontWeight: '600',
+      color: COLORS.TEXT_PRIMARY,
+    },
 
-  bodySmall: {
-    fontSize: 12,
-    fontWeight: '400',
-    color: COLORS.TEXT_SECONDARY,
-    lineHeight: 18,
-  },
+    bodyLarge: {
+      fontSize: 16,
+      fontWeight: '400',
+      color: COLORS.TEXT_PRIMARY,
+      lineHeight: 24,
+    },
 
-  label: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: COLORS.TEXT_SECONDARY,
-    textTransform: 'uppercase',
-  },
+    bodyMedium: {
+      fontSize: 14,
+      fontWeight: '400',
+      color: COLORS.TEXT_PRIMARY,
+      lineHeight: 20,
+    },
 
-  // Buttons
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: 48,
-  },
+    bodySmall: {
+      fontSize: 12,
+      fontWeight: '400',
+      color: COLORS.TEXT_SECONDARY,
+      lineHeight: 18,
+    },
 
-  buttonPrimary: {
-    backgroundColor: COLORS.PRIMARY,
-  },
+    label: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: COLORS.TEXT_SECONDARY,
+      textTransform: 'uppercase',
+    },
 
-  buttonSecondary: {
-    backgroundColor: COLORS.LIGHT_GRAY,
-  },
+    // Buttons
+    button: {
+      paddingVertical: 12,
+      paddingHorizontal: 24,
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: 48,
+    },
 
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.SECONDARY,
-  },
+    buttonPrimary: {
+      backgroundColor: COLORS.PRIMARY,
+    },
 
-  buttonTextSecondary: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.TEXT_PRIMARY,
-  },
+    buttonSecondary: {
+      backgroundColor: COLORS.LIGHT_GRAY,
+    },
 
-  // Inputs
-  input: {
-    borderWidth: 1,
-    borderColor: COLORS.GRAY,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    fontSize: 14,
-    color: COLORS.TEXT_PRIMARY,
-    marginVertical: 8,
-  },
+    buttonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: COLORS.SECONDARY,
+    },
 
-  inputLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.TEXT_PRIMARY,
-    marginBottom: 4,
-  },
+    buttonTextSecondary: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: COLORS.TEXT_PRIMARY,
+    },
 
-  inputError: {
-    borderColor: COLORS.ERROR,
-    borderWidth: 1,
-  },
+    // Inputs
+    input: {
+      borderWidth: 1,
+      borderColor: COLORS.GRAY,
+      borderRadius: 8,
+      paddingVertical: 12,
+      paddingHorizontal: 12,
+      fontSize: 14,
+      color: COLORS.TEXT_PRIMARY,
+      marginVertical: 8,
+    },
 
-  errorText: {
-    fontSize: 12,
-    color: COLORS.ERROR,
-    marginTop: 4,
-  },
+    inputLabel: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: COLORS.TEXT_PRIMARY,
+      marginBottom: 4,
+    },
 
-  // Cards
-  card: {
-    backgroundColor: COLORS.SECONDARY,
-    borderRadius: 12,
-    padding: 12,
-    marginVertical: 8,
-    elevation: 2,
-    shadowColor: COLORS.DARK,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
+    inputError: {
+      borderColor: COLORS.ERROR,
+      borderWidth: 1,
+    },
 
-  // Dividers
-  divider: {
-    height: 1,
-    backgroundColor: COLORS.GRAY,
-    marginVertical: 12,
-  },
+    errorText: {
+      fontSize: 12,
+      color: COLORS.ERROR,
+      marginTop: 4,
+    },
 
-  // Header
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: COLORS.PRIMARY,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
+    // Cards
+    card: {
+      backgroundColor: COLORS.SECONDARY,
+      borderRadius: 12,
+      padding: 12,
+      marginVertical: 8,
+      elevation: 2,
+      shadowColor: COLORS.DARK,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
 
-  headerText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: COLORS.SECONDARY,
-  },
+    // Dividers
+    divider: {
+      height: 1,
+      backgroundColor: COLORS.GRAY,
+      marginVertical: 12,
+    },
 
-  // Maps
-  mapContainer: {
-    flex: 1,
-  },
+    // Header
+    header: {
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      backgroundColor: COLORS.PRIMARY,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
 
-  map: {
-    ...StyleSheet.absoluteFillObject,
-  },
-});
+    headerText: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: COLORS.SECONDARY,
+    },
+
+    // Maps
+    mapContainer: {
+      flex: 1,
+    },
+
+    map: {
+      ...StyleSheet.absoluteFillObject,
+    },
+  });

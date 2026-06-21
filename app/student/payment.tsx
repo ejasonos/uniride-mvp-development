@@ -14,7 +14,8 @@ import { Button } from '@components/Button';
 import { Card } from '@components/Card';
 import { useRideStore } from '@store/rideStore';
 import { useAuthStore } from '@store/authStore';
-import { globalStyles } from '@styles/index';
+import { createGlobalStyles } from '@styles/index';
+import { useThemeStore } from '@store/themeStore';
 import { COLORS } from '@constants/index';
 
 export default function PaymentScreen() {
@@ -23,7 +24,8 @@ export default function PaymentScreen() {
     useRideStore();
   const { user } = useAuthStore();
   const [paymentMethod, setPaymentMethod] = useState<'flutterwave' | 'cash'>('flutterwave');
-
+  const isDark = useThemeStore((s) => s.isDark);
+  const globalStyles = createGlobalStyles(isDark);
   const handlePayment = async () => {
     try {
       if (!currentRide?.id || !user?.id) {
@@ -41,8 +43,8 @@ export default function PaymentScreen() {
         Alert.alert(
           'Inform Driver',
           'Remember to pay the driver ₦' +
-            currentRide.agreed_price.toLocaleString() +
-            ' in cash when you arrive.'
+          currentRide.agreed_price.toLocaleString() +
+          ' in cash when you arrive.'
         );
         await updatePaymentStatus('pending', 'pending', '');
         await updateRideStatus(currentRide.id, 'completed');

@@ -14,6 +14,40 @@ export const COLORS = {
   WARNING: '#F57C00',
 } as const;
 
+export const LIGHT_THEME = {
+  PRIMARY: '#0057D9',
+  SECONDARY: '#FFFFFF',
+  ACCENT: '#FFC107',
+
+  BACKGROUND: '#F6F7F9',
+  CARD: '#FFFFFF',
+
+  TEXT_PRIMARY: '#000000',
+  TEXT_SECONDARY: '#666666',
+
+  BORDER: '#E0E0E0',
+
+  ERROR: '#D32F2F',
+  SUCCESS: '#388E3C',
+};
+
+export const DARK_THEME = {
+  PRIMARY: '#4C8DFF',
+  SECONDARY: '#0B0F14',
+  ACCENT: '#FFD54F',
+
+  BACKGROUND: '#0B0F14',
+  CARD: '#121821',
+
+  TEXT_PRIMARY: '#FFFFFF',
+  TEXT_SECONDARY: '#A0A0A0',
+
+  BORDER: '#1F2A36',
+
+  ERROR: '#FF5A5A',
+  SUCCESS: '#4CAF50',
+};
+
 // Supabase
 export const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
 export const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';

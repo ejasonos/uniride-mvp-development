@@ -10,13 +10,17 @@ import { useRouter } from 'expo-router';
 import { Button } from '@components/Button';
 import { Card } from '@components/Card';
 import { COLORS } from '@constants/index';
+import { createGlobalStyles } from '@styles/index';
+import { useThemeStore } from '@store/themeStore';
 
 export default function SignUpRoleScreen() {
   const router = useRouter();
+  const isDark = useThemeStore((s) => s.isDark);
+  const globalStyles = createGlobalStyles(isDark);
 
   return (
     <ScrollView
-      contentContainerStyle={styles.scrollContent}
+      contentContainerStyle={[styles.scrollContent, globalStyles.container]}
       showsVerticalScrollIndicator={false}
     >
       {/* Header */}

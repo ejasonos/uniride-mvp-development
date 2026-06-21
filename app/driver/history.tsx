@@ -14,7 +14,8 @@ import { Button } from '@components/Button';
 import { Card } from '@components/Card';
 import { useRideStore } from '@store/rideStore';
 import { useAuthStore } from '@store/authStore';
-import { globalStyles } from '@styles/index';
+import { createGlobalStyles } from '@styles/index';
+import { useThemeStore } from '@store/themeStore';
 import { COLORS } from '@constants/index';
 
 export default function DriverHistoryScreen() {
@@ -22,6 +23,8 @@ export default function DriverHistoryScreen() {
   const { user } = useAuthStore();
   const { rides, isLoading, fetchDriverRideHistory } = useRideStore();
   const [refreshing, setRefreshing] = React.useState(false);
+  const isDark = useThemeStore((s) => s.isDark);
+  const globalStyles = createGlobalStyles(isDark);
 
   useEffect(() => {
     if (user?.id) {
@@ -85,7 +88,7 @@ export default function DriverHistoryScreen() {
         </Text>
       </View>
 
-      <View style={globalStyles.rowBetween} style={styles.priceRow}>
+      <View style={[globalStyles.rowBetween, styles.priceRow]}>
         <Text style={globalStyles.bodyMedium}>Amount Earned:</Text>
         <Text style={styles.price}>₦{item.agreed_price.toLocaleString()}</Text>
       </View>
@@ -108,7 +111,7 @@ export default function DriverHistoryScreen() {
       </View>
 
       {isLoading && rides.length === 0 ? (
-        <View style={globalStyles.columnCenter} style={styles.centerContent}>
+        <View style={[globalStyles.columnCenter, styles.centerContent]}>
           <ActivityIndicator size="large" color={COLORS.PRIMARY} />
           <Text style={[globalStyles.bodyMedium, styles.loadingText]}>Loading rides...</Text>
         </View>
@@ -138,7 +141,7 @@ export default function DriverHistoryScreen() {
           )}
 
           {rides.length === 0 ? (
-            <View style={globalStyles.columnCenter} style={styles.centerContent}>
+            <View style={[globalStyles.columnCenter, styles.centerContent]}>
               <Text style={globalStyles.heading3}>No rides yet</Text>
               <Text style={[globalStyles.bodySmall, styles.emptyText]}>
                 Start accepting ride requests to build your history

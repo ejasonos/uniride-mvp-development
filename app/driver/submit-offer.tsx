@@ -18,7 +18,8 @@ import { Card } from '@components/Card';
 import { useAuthStore } from '@store/authStore';
 import { useRideStore } from '@store/rideStore';
 import { useChatStore } from '@store/chatStore';
-import { globalStyles } from '@styles/index';
+import { createGlobalStyles } from '@styles/index';
+import { useThemeStore } from '@store/themeStore';
 import { COLORS } from '@constants/index';
 
 const offerSchema = z.object({
@@ -36,6 +37,8 @@ export default function SubmitOfferScreen() {
   const { createRideOffer, isLoading, rideRequests } = useRideStore();
   const { createConversation } = useChatStore();
   const [estimatedPrice, setEstimatedPrice] = useState('500');
+  const isDark = useThemeStore((s) => s.isDark);
+  const globalStyles = createGlobalStyles(isDark);
 
   const {
     control,

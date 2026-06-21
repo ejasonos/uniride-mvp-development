@@ -17,7 +17,8 @@ import { Input } from '@components/Input';
 import { Card } from '@components/Card';
 import { useAuthStore } from '@store/authStore';
 import { useRideStore } from '@store/rideStore';
-import { globalStyles } from '@styles/index';
+import { createGlobalStyles } from '@styles/index';
+import { useThemeStore } from '@store/themeStore';
 import { COLORS } from '@constants/index';
 
 const rideRequestSchema = z.object({
@@ -36,6 +37,8 @@ export default function RideRequestScreen() {
   const { user } = useAuthStore();
   const { createRideRequest, isLoading } = useRideStore();
   const [showLocationPicker, setShowLocationPicker] = useState<'pickup' | 'destination' | null>(null);
+  const isDark = useThemeStore((s) => s.isDark);
+  const globalStyles = createGlobalStyles(isDark);
 
   const {
     control,

@@ -12,7 +12,8 @@ import { useRouter } from 'expo-router';
 import { Button } from '@components/Button';
 import { Input } from '@components/Input';
 import { useAuthStore } from '@store/authStore';
-import { globalStyles } from '@styles/index';
+import { createGlobalStyles } from '@styles/index';
+import { useThemeStore } from '@store/themeStore';
 import { COLORS } from '@constants/index';
 
 export default function StudentSignUpScreen() {
@@ -24,6 +25,8 @@ export default function StudentSignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { signUp, isLoading } = useAuthStore();
+  const isDark = useThemeStore((s) => s.isDark);
+  const globalStyles = createGlobalStyles(isDark);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};

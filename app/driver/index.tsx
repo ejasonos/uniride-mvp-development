@@ -12,12 +12,13 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import MapView, { Marker } from 'react-native-maps';
-import { Card } from '@components/Card';
-import { Button } from '@components/Button';
+
 import { useAuthStore } from '@store/authStore';
 import { useRideStore } from '@store/rideStore';
 import { useLocationStore } from '@store/locationStore';
-import { globalStyles } from '@styles/index';
+
+import { createGlobalStyles } from '@styles/index';
+import { useThemeStore } from '@store/themeStore';
 import { COLORS } from '@constants/index';
 
 export default function DriverHomeScreen() {
@@ -25,274 +26,296 @@ export default function DriverHomeScreen() {
   const { user, signOut } = useAuthStore();
   const { rideRequests, fetchPendingRideRequests, isLoading } = useRideStore();
   const { currentLocation } = useLocationStore();
+    const isDark = useThemeStore((s) => s.isDark);
+    const globalStyles = createGlobalStyles(isDark);
+
   const [isOnline, setIsOnline] = useState(false);
-  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
-    if (isOnline) {
-      fetchPendingRideRequests();
-      const interval = setInterval(() => {
-        fetchPendingRideRequests();
-      }, 10000);
-      return () => clearInterval(interval);
-    }
+    if (!isOnline) return;
+
+    fetchPendingRideRequests();
+
+    const interval = setInterval(fetchPendingRideRequests, 8000);
+    return () => clearInterval(interval);
   }, [isOnline]);
 
   const initialRegion = {
     latitude: currentLocation?.latitude || 6.5244,
     longitude: currentLocation?.longitude || 3.3792,
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
+    latitudeDelta: 0.04,
+    longitudeDelta: 0.04,
   };
 
-  const handleRequestSelect = (requestId: string) => {
+  const handleSelect = (id: string) => {
     router.push({
       pathname: '/driver/submit-offer',
-      params: { rideRequestId: requestId },
+      params: { rideRequestId: id },
     });
   };
 
-  const renderRequestCard = ({ item }: any) => (
-    <Card style={styles.requestCard}>
-      <View style={globalStyles.rowBetween}>
-        <Text style={globalStyles.heading3}>New Request</Text>
-        <Text style={styles.badge}>1.2 km away</Text>
-      </View>
-
-      <View style={styles.divider} />
-
-      <View style={styles.routeContainer}>
-        <Text style={globalStyles.bodySmall}>
-          <Text style={{ fontWeight: '600' }}>Pickup: </Text>
-          Main Campus Gate
-        </Text>
-        <Text style={[globalStyles.bodySmall, styles.routeMargin]}>
-          <Text style={{ fontWeight: '600' }}>Destination: </Text>
-          City Center
-        </Text>
-      </View>
-
+  const renderRequest = ({ item }: any) => {
+    return (
       <TouchableOpacity
-        style={styles.submitButton}
-        onPress={() => handleRequestSelect(item.id)}
+        onPress={() => handleSelect(item.id)}
+        style={styles.requestCard}
+        activeOpacity={0.85}
       >
-        <Text style={styles.submitButtonText}>Submit Offer</Text>
+        <View style={styles.requestTopRow}>
+          <Text style={styles.requestTitle}>New Ride Request</Text>
+          <Text style={styles.distanceBadge}>~1.2 km</Text>
+        </View>
+
+        <View style={styles.divider} />
+
+        <Text style={styles.label}>
+          Pickup: <Text style={styles.value}>Main Campus Gate</Text>
+        </Text>
+
+        <Text style={styles.label}>
+          Destination: <Text style={styles.value}>City Center</Text>
+        </Text>
+
+        <View style={styles.ctaRow}>
+          <Text style={styles.ctaHint}>Tap to submit offer →</Text>
+        </View>
       </TouchableOpacity>
-    </Card>
-  );
+    );
+  };
 
   return (
-    <SafeAreaView style={globalStyles.container}>
+    <SafeAreaView style={styles.container}>
+      
+      {/* HEADER / DRIVER STATUS */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Welcome, {user?.full_name}!</Text>
-          <Text style={globalStyles.bodySmall}>
-            {isOnline ? 'You are online' : 'Go online to receive requests'}
+          <Text style={styles.greeting}>Hi, {user?.full_name}</Text>
+          <Text style={styles.statusText}>
+            {isOnline ? 'Online • Receiving requests' : 'Offline'}
           </Text>
         </View>
-        <Button
-          title="Logout"
-          onPress={signOut}
-          variant="secondary"
-          style={{ width: 80 }}
+
+        <Switch
+          value={isOnline}
+          onValueChange={setIsOnline}
+          trackColor={{ false: COLORS.GRAY, true: COLORS.ACCENT }}
+          thumbColor={isOnline ? COLORS.PRIMARY : COLORS.LIGHT_GRAY}
         />
       </View>
 
-      <ScrollView style={styles.content}>
-        <Card style={styles.onlineCard}>
-          <View style={globalStyles.rowBetween}>
-            <View>
-              <Text style={globalStyles.heading3}>Online Status</Text>
-              <Text style={globalStyles.bodySmall}>
-                {isOnline ? 'Accepting ride requests' : 'Turn on to accept requests'}
-              </Text>
-            </View>
-            <Switch
-              value={isOnline}
-              onValueChange={setIsOnline}
-              trackColor={{ false: COLORS.GRAY, true: COLORS.ACCENT }}
-              thumbColor={isOnline ? COLORS.PRIMARY : COLORS.LIGHT_GRAY}
-              style={styles.switch}
-            />
-          </View>
-        </Card>
+      <ScrollView contentContainerStyle={styles.content}>
 
+        {/* MAP PREVIEW (small, not dominant) */}
         {isOnline && (
-          <>
-            <View style={styles.mapContainer}>
-              {mapReady ? (
-                <MapView
-                  style={styles.map}
-                  initialRegion={initialRegion}
-                  onMapReady={() => setMapReady(true)}
-                >
-                  {currentLocation && (
-                    <Marker
-                      coordinate={{
-                        latitude: currentLocation.latitude,
-                        longitude: currentLocation.longitude,
-                      }}
-                      title="Your Location"
-                      description="You are here"
-                    />
-                  )}
-                </MapView>
-              ) : (
-                <View style={[globalStyles.columnCenter, styles.mapPlaceholder]}>
-                  <ActivityIndicator color={COLORS.PRIMARY} />
-                </View>
+          <View style={styles.mapCard}>
+            <MapView style={styles.map} initialRegion={initialRegion}>
+              {currentLocation && (
+                <Marker coordinate={currentLocation} />
               )}
-            </View>
-
-            <View style={styles.requestsHeader}>
-              <Text style={globalStyles.heading3}>
-                Ride Requests ({rideRequests.length})
-              </Text>
-            </View>
-
-            {isLoading && rideRequests.length === 0 ? (
-              <View style={[globalStyles.columnCenter, styles.emptyContainer]}>
-                <ActivityIndicator color={COLORS.PRIMARY} />
-                <Text style={[globalStyles.bodySmall, styles.emptyText]}>
-                  Looking for requests...
-                </Text>
-              </View>
-            ) : rideRequests.length === 0 ? (
-              <View style={[globalStyles.columnCenter, styles.emptyContainer]}>
-                <Text style={globalStyles.bodyMedium}>No requests nearby</Text>
-                <Text style={globalStyles.bodySmall}>
-                  Check back soon for new ride requests
-                </Text>
-              </View>
-            ) : (
-              <FlatList
-                data={rideRequests}
-                keyExtractor={(item) => item.id}
-                renderItem={renderRequestCard}
-                scrollEnabled={false}
-                contentContainerStyle={styles.listContent}
-              />
-            )}
-          </>
+            </MapView>
+          </View>
         )}
 
+        {/* REQUESTS HEADER */}
+        {isOnline && (
+          <Text style={styles.sectionTitle}>
+            Incoming Requests ({rideRequests.length})
+          </Text>
+        )}
+
+        {/* STATES */}
         {!isOnline && (
-          <View style={[globalStyles.columnCenter, styles.offlineContainer]}>
-            <Text style={globalStyles.heading3}>You are offline</Text>
-            <Text style={[globalStyles.bodySmall, styles.offlineText]}>
-              Toggle the switch above to go online and start receiving ride requests
+          <View style={styles.centerState}>
+            <Text style={styles.centerTitle}>You are offline</Text>
+            <Text style={styles.centerText}>
+              Turn on online mode to receive ride requests
             </Text>
           </View>
         )}
 
-        <View style={styles.actionContainer}>
-          <Button
-            title="View History"
-            onPress={() => router.push('/driver/history')}
-            variant="secondary"
+        {isOnline && isLoading && rideRequests.length === 0 && (
+          <View style={styles.centerState}>
+            <ActivityIndicator color={COLORS.PRIMARY} />
+            <Text style={styles.centerText}>Searching requests...</Text>
+          </View>
+        )}
+
+        {isOnline && rideRequests.length === 0 && !isLoading && (
+          <View style={styles.centerState}>
+            <Text style={styles.centerTitle}>No nearby requests</Text>
+            <Text style={styles.centerText}>
+              Stay online — requests will appear here
+            </Text>
+          </View>
+        )}
+
+        {/* REQUEST LIST */}
+        {isOnline && rideRequests.length > 0 && (
+          <FlatList
+            data={rideRequests}
+            renderItem={renderRequest}
+            keyExtractor={(item) => item.id}
+            scrollEnabled={false}
           />
+        )}
+
+        {/* ACTIONS */}
+        <View style={styles.footer}>
+          <TouchableOpacity
+            onPress={() => router.push('/driver/history')}
+            style={styles.historyBtn}
+          >
+            <Text style={styles.historyText}>View Ride History</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={signOut} style={styles.logoutBtn}>
+            <Text style={styles.logoutText}>Logout</Text>
+          </TouchableOpacity>
         </View>
+
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F7F7F8',
+  },
+
+  /* HEADER */
   header: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    padding: 16,
     backgroundColor: COLORS.PRIMARY,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   greeting: {
-    fontSize: 20,
-    fontWeight: '700',
     color: COLORS.SECONDARY,
+    fontSize: 18,
+    fontWeight: '700',
   },
+  statusText: {
+    color: COLORS.SECONDARY,
+    fontSize: 12,
+    marginTop: 2,
+    opacity: 0.85,
+  },
+
+  /* CONTENT */
   content: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    padding: 16,
   },
-  onlineCard: {
-    marginBottom: 16,
-    backgroundColor: 'rgba(255, 193, 7, 0.1)',
-  },
-  switch: {
-    transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
-  },
-  mapContainer: {
-    height: 250,
+
+  /* MAP */
+  mapCard: {
+    height: 180,
     borderRadius: 12,
     overflow: 'hidden',
-    marginVertical: 16,
+    marginBottom: 16,
   },
   map: {
     flex: 1,
   },
-  mapPlaceholder: {
-    flex: 1,
-    justifyContent: 'center',
+
+  /* SECTIONS */
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 12,
+    color: COLORS.TEXT_PRIMARY,
   },
-  requestsHeader: {
-    marginVertical: 12,
-  },
+
+  /* REQUEST CARD */
   requestCard: {
+    backgroundColor: '#fff',
+    padding: 14,
+    borderRadius: 12,
     marginBottom: 12,
   },
-  badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: COLORS.ACCENT,
-    borderRadius: 4,
+  requestTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  requestTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  distanceBadge: {
     fontSize: 12,
+    backgroundColor: COLORS.ACCENT,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
     fontWeight: '600',
-    color: COLORS.TEXT_PRIMARY,
   },
   divider: {
     height: 1,
     backgroundColor: COLORS.GRAY,
-    marginVertical: 12,
+    marginVertical: 10,
   },
-  routeContainer: {
-    marginBottom: 12,
-  },
-  routeMargin: {
+  label: {
+    fontSize: 13,
     marginTop: 4,
+    color: COLORS.TEXT_SECONDARY,
   },
-  submitButton: {
-    paddingVertical: 12,
-    backgroundColor: COLORS.PRIMARY,
-    borderRadius: 8,
+  value: {
+    fontWeight: '600',
+    color: COLORS.TEXT_PRIMARY,
+  },
+  ctaRow: {
+    marginTop: 10,
+  },
+  ctaHint: {
+    fontSize: 12,
+    color: COLORS.PRIMARY,
+    fontWeight: '600',
+  },
+
+  /* EMPTY STATES */
+  centerState: {
     alignItems: 'center',
-  },
-  submitButtonText: {
-    color: COLORS.SECONDARY,
-    fontWeight: '700',
-    fontSize: 14,
-  },
-  emptyContainer: {
+    justifyContent: 'center',
     paddingVertical: 40,
   },
-  emptyText: {
-    marginTop: 12,
+  centerTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginTop: 8,
   },
-  offlineContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingVertical: 60,
-  },
-  offlineText: {
-    marginTop: 12,
-    marginHorizontal: 24,
+  centerText: {
+    fontSize: 13,
+    marginTop: 6,
+    color: COLORS.TEXT_SECONDARY,
     textAlign: 'center',
   },
-  listContent: {
-    paddingVertical: 8,
+
+  /* FOOTER */
+  footer: {
+    marginTop: 20,
+    gap: 10,
   },
-  actionContainer: {
-    paddingVertical: 24,
+
+  historyBtn: {
+    padding: 12,
+    borderRadius: 10,
+    backgroundColor: COLORS.LIGHT_GRAY,
+    alignItems: 'center',
+  },
+  historyText: {
+    fontWeight: '600',
+  },
+
+  logoutBtn: {
+    padding: 12,
+    borderRadius: 10,
+    backgroundColor: '#FFE5E5',
+    alignItems: 'center',
+  },
+  logoutText: {
+    color: '#C62828',
+    fontWeight: '600',
   },
 });

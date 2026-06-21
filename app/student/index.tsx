@@ -1,165 +1,156 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   SafeAreaView,
-  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
-import { useRouter } from 'expo-router';
 import MapView, { Marker } from 'react-native-maps';
-import { Button } from '@components/Button';
-import { Card } from '@components/Card';
+import { useRouter } from 'expo-router';
+
 import { useAuthStore } from '@store/authStore';
 import { useRideStore } from '@store/rideStore';
 import { useLocationStore } from '@store/locationStore';
-import { globalStyles } from '@styles/index';
+
 import { COLORS } from '@constants/index';
+
+import { useThemeStore } from '@store/themeStore';
+import { createGlobalStyles } from '@styles/index';
 
 export default function StudentHomeScreen() {
   const router = useRouter();
   const { user, signOut } = useAuthStore();
   const { currentRide } = useRideStore();
   const { currentLocation } = useLocationStore();
+
+  const isDark = useThemeStore((s) => s.isDark);
+  const globalStyles = createGlobalStyles(isDark);
+
   const [mapReady, setMapReady] = useState(false);
 
   const hasActiveRide = currentRide && currentRide.status !== 'completed';
 
+  const go = (path: string) => router.push(path);
+
   const initialRegion = {
     latitude: currentLocation?.latitude || 6.5244,
     longitude: currentLocation?.longitude || 3.3792,
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
-  };
-
-  const handleQuickAction = (screen: string) => {
-    switch (screen) {
-      case 'RideTracking':
-        router.push('/student/ride-tracking');
-        break;
-      case 'RideRequest':
-        router.push('/student/ride-request');
-        break;
-      case 'RideHistory':
-        router.push('/student/history');
-        break;
-      case 'RideOffers':
-        router.push('/student/ride-offers');
-        break;
-      case 'NegotiationChat':
-        router.push('/student/negotiation-chat');
-        break;
-      default:
-        break;
-    }
+    latitudeDelta: 0.04,
+    longitudeDelta: 0.04,
   };
 
   return (
     <SafeAreaView style={globalStyles.container}>
+
+      {/* HEADER */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Welcome, {user?.full_name}!</Text>
-          <Text style={globalStyles.bodySmall}>Ready for a ride?</Text>
+          <Text style={styles.greeting}>Hi, {user?.full_name}</Text>
+          <Text style={styles.subText}>Where to next?</Text>
         </View>
-        <Button
-          title="Logout"
-          onPress={signOut}
-          variant="secondary"
-          style={{ width: 80 }}
-        />
+
+        <TouchableOpacity onPress={signOut}>
+          <Text style={styles.logout}>Logout</Text>
+        </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.content}>
-        {hasActiveRide ? (
-          <Card style={styles.activeRideCard}>
-            <Text style={globalStyles.heading3}>Active Ride</Text>
-            <Text style={[globalStyles.bodySmall, styles.rideStatus]}>
-              Status: {currentRide.status}
-            </Text>
-            <Button
-              title="View Tracking"
-              onPress={() => handleQuickAction('RideTracking')}
-              variant="primary"
-              style={styles.button}
-            />
-          </Card>
-        ) : (
-          <Card style={styles.card}>
-            <Text style={globalStyles.heading3}>Start a New Ride</Text>
-            <Text style={globalStyles.bodySmall}>
-              Request a ride and negotiate with our drivers
-            </Text>
-            <Button
-              title="Request a Ride"
-              onPress={() => handleQuickAction('RideRequest')}
-              variant="primary"
-              style={styles.button}
-            />
-          </Card>
-        )}
+      <ScrollView contentContainerStyle={styles.content}>
 
-        <View style={styles.mapContainer}>
-          {mapReady ? (
-            <MapView
-              style={styles.map}
-              initialRegion={initialRegion}
-              onMapReady={() => setMapReady(true)}
-            >
-              {currentLocation && (
-                <Marker
-                  coordinate={{
-                    latitude: currentLocation.latitude,
-                    longitude: currentLocation.longitude,
-                  }}
-                  title="Your Location"
-                  description="You are here"
-                />
-              )}
-            </MapView>
+        {/* PRIMARY STATUS CARD */}
+        <View style={styles.primaryCard}>
+          {hasActiveRide ? (
+            <>
+              <Text style={styles.cardTitle}>Active Ride</Text>
+              <Text style={styles.statusText}>
+                Status: {currentRide.status}
+              </Text>
+
+              <TouchableOpacity
+                style={styles.primaryBtn}
+                onPress={() => go('/student/ride-tracking')}
+              >
+                <Text style={styles.primaryBtnText}>Track Ride</Text>
+              </TouchableOpacity>
+            </>
           ) : (
-            <View style={[globalStyles.columnCenter, styles.mapPlaceholder]}>
-              <ActivityIndicator color={COLORS.PRIMARY} />
-            </View>
+            <>
+              <Text style={styles.cardTitle}>No Active Ride</Text>
+              <Text style={styles.statusText}>
+                Book a ride in seconds
+              </Text>
+
+              <TouchableOpacity
+                style={styles.primaryBtn}
+                onPress={() => go('/student/ride-request')}
+              >
+                <Text style={styles.primaryBtnText}>Request Ride</Text>
+              </TouchableOpacity>
+            </>
           )}
         </View>
 
-        <View style={styles.quickActions}>
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => handleQuickAction('RideHistory')}
-          >
-            <Text style={styles.actionIcon}>📋</Text>
-            <Text style={globalStyles.bodySmall}>History</Text>
-          </TouchableOpacity>
+        {/* MAP (context only, not dominant) */}
+        <View style={styles.mapCard}>
+          {mapReady ? null : (
+            <ActivityIndicator color={COLORS.PRIMARY} />
+          )}
 
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => handleQuickAction('RideOffers')}
+          <MapView
+            style={styles.map}
+            initialRegion={initialRegion}
+            onMapReady={() => setMapReady(true)}
           >
-            <Text style={styles.actionIcon}>🎯</Text>
-            <Text style={globalStyles.bodySmall}>Offers</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => handleQuickAction('NegotiationChat')}
-          >
-            <Text style={styles.actionIcon}>💬</Text>
-            <Text style={globalStyles.bodySmall}>Chat</Text>
-          </TouchableOpacity>
+            {currentLocation && (
+              <Marker coordinate={currentLocation} />
+            )}
+          </MapView>
         </View>
+
+        {/* QUICK ACTION CHIPS (Google UX pattern) */}
+        <View style={styles.chipsContainer}>
+
+          <TouchableOpacity
+            style={styles.chip}
+            onPress={() => go('/student/history')}
+          >
+            <Text style={styles.chipText}>Ride History</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.chip}
+            onPress={() => go('/student/ride-offers')}
+          >
+            <Text style={styles.chipText}>Offers</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.chip}
+            onPress={() => go('/student/negotiation-chat')}
+          >
+            <Text style={styles.chipText}>Chat</Text>
+          </TouchableOpacity>
+
+        </View>
+
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
+
+  /* CONTAINER */
+  container: {
+    flex: 1,
+    backgroundColor: '#F6F7F9',
+  },
+
+  /* HEADER (Google clean bar) */
   header: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    backgroundColor: COLORS.PRIMARY,
+    padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -167,55 +158,81 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.SECONDARY,
+    color: COLORS.TEXT_PRIMARY,
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+  subText: {
+    fontSize: 13,
+    color: COLORS.TEXT_SECONDARY,
+    marginTop: 2,
   },
-  card: {
-    marginBottom: 16,
-  },
-  activeRideCard: {
-    marginBottom: 16,
-    backgroundColor: '#E8F5E9',
-  },
-  rideStatus: {
-    marginVertical: 8,
-    color: '#2E7D32',
+  logout: {
+    color: '#D32F2F',
     fontWeight: '600',
   },
-  button: {
-    marginTop: 12,
+
+  /* CONTENT */
+  content: {
+    padding: 16,
   },
-  mapContainer: {
-    height: 250,
-    borderRadius: 12,
+
+  /* PRIMARY CARD (Uber-style action focus) */
+  primaryCard: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 14,
+    marginBottom: 14,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  statusText: {
+    marginTop: 6,
+    fontSize: 13,
+    color: COLORS.TEXT_SECONDARY,
+  },
+
+  primaryBtn: {
+    marginTop: 14,
+    backgroundColor: COLORS.PRIMARY,
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  primaryBtnText: {
+    color: '#fff',
+    fontWeight: '700',
+  },
+
+  /* MAP (low visual priority) */
+  mapCard: {
+    height: 180,
+    borderRadius: 14,
     overflow: 'hidden',
-    marginVertical: 16,
+    marginBottom: 16,
+    backgroundColor: '#EDEFF3',
   },
   map: {
     flex: 1,
   },
-  mapPlaceholder: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  quickActions: {
+
+  /* CHIPS (Google UX pattern) */
+  chipsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 16,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.GRAY,
+    flexWrap: 'wrap',
+    gap: 10,
   },
-  actionButton: {
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+  chip: {
+    backgroundColor: '#fff',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: COLORS.GRAY,
   },
-  actionIcon: {
-    fontSize: 28,
-    marginBottom: 8,
+  chipText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.TEXT_PRIMARY,
   },
 });

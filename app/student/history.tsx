@@ -14,7 +14,8 @@ import { Button } from '@components/Button';
 import { Card } from '@components/Card';
 import { useRideStore } from '@store/rideStore';
 import { useAuthStore } from '@store/authStore';
-import { globalStyles } from '@styles/index';
+import { createGlobalStyles } from '@styles/index';
+import { useThemeStore } from '@store/themeStore';
 import { COLORS } from '@constants/index';
 
 export default function RideHistoryScreen() {
@@ -22,6 +23,8 @@ export default function RideHistoryScreen() {
   const { user } = useAuthStore();
   const { rides, isLoading, fetchStudentRideHistory } = useRideStore();
   const [refreshing, setRefreshing] = React.useState(false);
+  const isDark = useThemeStore((s) => s.isDark);
+  const globalStyles = createGlobalStyles(isDark);
 
   useEffect(() => {
     if (user?.id) {
@@ -79,7 +82,7 @@ export default function RideHistoryScreen() {
         </Text>
       </View>
 
-      <View style={globalStyles.rowBetween} style={styles.priceRow}>
+      <View style={[globalStyles.rowBetween, styles.priceRow]}>
         <Text style={globalStyles.bodyMedium}>Amount Paid:</Text>
         <Text style={styles.price}>₦{item.agreed_price.toLocaleString()}</Text>
       </View>

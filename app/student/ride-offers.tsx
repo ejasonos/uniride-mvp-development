@@ -14,7 +14,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Button } from '@components/Button';
 import { Card } from '@components/Card';
 import { useRideStore } from '@store/rideStore';
-import { globalStyles } from '@styles/index';
+import { createGlobalStyles } from '@styles/index';
+import { useThemeStore } from '@store/themeStore';
 import { COLORS } from '@constants/index';
 
 export default function RideOffersScreen() {
@@ -22,7 +23,8 @@ export default function RideOffersScreen() {
   const { rideRequestId } = useLocalSearchParams<{ rideRequestId?: string | string[] }>();
   const resolvedRideRequestId = Array.isArray(rideRequestId) ? rideRequestId[0] : rideRequestId;
   const { currentRideRequest, rideOffers, isLoading, fetchRideOffers } = useRideStore();
-
+  const isDark = useThemeStore((s) => s.isDark);
+  const globalStyles = createGlobalStyles(isDark);
   useEffect(() => {
     const requestId = resolvedRideRequestId || currentRideRequest?.id;
 
@@ -59,7 +61,7 @@ export default function RideOffersScreen() {
         </View>
       )}
 
-      <View style={globalStyles.rowBetween} style={styles.buttonContainer}>
+      <View style={[globalStyles.rowBetween, styles.buttonContainer]}>
         <Button
           title="View Details"
           onPress={() => handleSelectOffer(item.id)}
@@ -82,7 +84,7 @@ export default function RideOffersScreen() {
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Available Offers</Text>
         </View>
-        <View style={globalStyles.columnCenter} style={styles.centerContent}>
+        <View style={[globalStyles.columnCenter, styles.centerContent]}>
           <ActivityIndicator size="large" color={COLORS.PRIMARY} />
           <Text style={[globalStyles.bodyMedium, styles.loadingText]}>Waiting for offers...</Text>
         </View>
@@ -98,7 +100,7 @@ export default function RideOffersScreen() {
 
       <View style={styles.content}>
         {rideOffers.length === 0 ? (
-          <View style={globalStyles.columnCenter} style={styles.centerContent}>
+          <View style={[globalStyles.columnCenter, styles.centerContent]}>
             <Text style={globalStyles.bodyMedium}>No offers yet</Text>
             <Text style={globalStyles.bodySmall}>Drivers will see your request shortly</Text>
             <ActivityIndicator color={COLORS.PRIMARY} style={styles.spinner} />
