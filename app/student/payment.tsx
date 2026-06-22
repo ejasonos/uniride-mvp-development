@@ -10,22 +10,21 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button } from '@components/Button';
-import { Card } from '@components/Card';
+import Button from '@components/Button';
+import Card from '@components/Card';
 import { useRideStore } from '@store/rideStore';
 import { useAuthStore } from '@store/authStore';
-import { createGlobalStyles } from '@styles/index';
-import { useThemeStore } from '@store/themeStore';
-import { COLORS } from '@constants/index';
+import { useTheme } from '@hooks/useTheme'
+import { globalStyles } from '@styles/globalStyles';
 
 export default function PaymentScreen() {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   const router = useRouter();
   const { currentRide, createPayment, updatePaymentStatus, updateRideStatus, isLoading } =
     useRideStore();
   const { user } = useAuthStore();
   const [paymentMethod, setPaymentMethod] = useState<'flutterwave' | 'cash'>('flutterwave');
-  const isDark = useThemeStore((s) => s.isDark);
-  const globalStyles = createGlobalStyles(isDark);
   const handlePayment = async () => {
     try {
       if (!currentRide?.id || !user?.id) {
@@ -169,23 +168,23 @@ export default function PaymentScreen() {
             variant="primary"
             disabled={isLoading}
           />
-          {isLoading && <ActivityIndicator color={COLORS.PRIMARY} style={styles.spinner} />}
+          {isLoading && <ActivityIndicator color={colors.PRIMARY} style={styles.spinner} />}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   header: {
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: COLORS.PRIMARY,
+    backgroundColor: colors.PRIMARY,
   },
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: COLORS.SECONDARY,
+    color: colors.SECONDARY,
   },
   content: {
     flex: 1,
@@ -200,7 +199,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.LIGHT_GRAY,
+    borderBottomColor: colors.LIGHT_GRAY,
   },
   divider: {
     borderBottomWidth: 2,
@@ -210,7 +209,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 16,
-    backgroundColor: COLORS.LIGHT_GRAY,
+    backgroundColor: colors.LIGHT_GRAY,
     paddingHorizontal: 12,
     borderRadius: 8,
     marginTop: 8,
@@ -218,7 +217,7 @@ const styles = StyleSheet.create({
   totalPrice: {
     fontSize: 24,
     fontWeight: '700',
-    color: COLORS.ACCENT,
+    color: colors.ACCENT,
   },
   methodOption: {
     flexDirection: 'row',
@@ -227,11 +226,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginVertical: 8,
     borderWidth: 1,
-    borderColor: COLORS.GRAY,
+    borderColor: colors.GRAY,
     borderRadius: 8,
   },
   methodSelected: {
-    borderColor: COLORS.PRIMARY,
+    borderColor: colors.PRIMARY,
     backgroundColor: 'rgba(0, 87, 217, 0.05)',
   },
   methodRadio: {
@@ -239,7 +238,7 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: COLORS.GRAY,
+    borderColor: colors.GRAY,
     marginRight: 12,
     justifyContent: 'center',
     alignItems: 'center',
@@ -248,7 +247,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: COLORS.PRIMARY,
+    backgroundColor: colors.PRIMARY,
   },
   methodContent: {
     flex: 1,

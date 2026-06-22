@@ -16,20 +16,18 @@ import MapView, { Marker } from 'react-native-maps';
 import { useAuthStore } from '@store/authStore';
 import { useRideStore } from '@store/rideStore';
 import { useLocationStore } from '@store/locationStore';
-
-import { createGlobalStyles } from '@styles/index';
-import { useThemeStore } from '@store/themeStore';
-import { COLORS } from '@constants/index';
+import { useTheme } from '@hooks/useTheme';
+import { globalStyles } from '@/styles/globalStyles';
 
 export default function DriverHomeScreen() {
   const router = useRouter();
   const { user, signOut } = useAuthStore();
   const { rideRequests, fetchPendingRideRequests, isLoading } = useRideStore();
   const { currentLocation } = useLocationStore();
-    const isDark = useThemeStore((s) => s.isDark);
-    const globalStyles = createGlobalStyles(isDark);
 
   const [isOnline, setIsOnline] = useState(false);
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   useEffect(() => {
     if (!isOnline) return;
@@ -84,8 +82,8 @@ export default function DriverHomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      
+    <SafeAreaView style={globalStyles.container}>
+
       {/* HEADER / DRIVER STATUS */}
       <View style={styles.header}>
         <View>
@@ -98,8 +96,8 @@ export default function DriverHomeScreen() {
         <Switch
           value={isOnline}
           onValueChange={setIsOnline}
-          trackColor={{ false: COLORS.GRAY, true: COLORS.ACCENT }}
-          thumbColor={isOnline ? COLORS.PRIMARY : COLORS.LIGHT_GRAY}
+          trackColor={{ false: colors.GRAY, true: colors.ACCENT }}
+          thumbColor={isOnline ? colors.PRIMARY : colors.LIGHT_GRAY}
         />
       </View>
 
@@ -135,7 +133,7 @@ export default function DriverHomeScreen() {
 
         {isOnline && isLoading && rideRequests.length === 0 && (
           <View style={styles.centerState}>
-            <ActivityIndicator color={COLORS.PRIMARY} />
+            <ActivityIndicator color={colors.PRIMARY} />
             <Text style={styles.centerText}>Searching requests...</Text>
           </View>
         )}
@@ -178,144 +176,141 @@ export default function DriverHomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F7F7F8',
-  },
 
-  /* HEADER */
-  header: {
-    padding: 16,
-    backgroundColor: COLORS.PRIMARY,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  greeting: {
-    color: COLORS.SECONDARY,
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  statusText: {
-    color: COLORS.SECONDARY,
-    fontSize: 12,
-    marginTop: 2,
-    opacity: 0.85,
-  },
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    /* HEADER */
+    header: {
+      padding: 16,
+      backgroundColor: colors.PRIMARY,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    greeting: {
+      color: colors.SECONDARY,
+      fontSize: 18,
+      fontWeight: '700',
+    },
+    statusText: {
+      color: colors.SECONDARY,
+      fontSize: 12,
+      marginTop: 2,
+      opacity: 0.85,
+    },
 
-  /* CONTENT */
-  content: {
-    padding: 16,
-  },
+    /* CONTENT */
+    content: {
+      padding: 16,
+    },
 
-  /* MAP */
-  mapCard: {
-    height: 180,
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginBottom: 16,
-  },
-  map: {
-    flex: 1,
-  },
+    /* MAP */
+    mapCard: {
+      height: 180,
+      borderRadius: 12,
+      overflow: 'hidden',
+      marginBottom: 16,
+    },
+    map: {
+      flex: 1,
+    },
 
-  /* SECTIONS */
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 12,
-    color: COLORS.TEXT_PRIMARY,
-  },
+    /* SECTIONS */
+    sectionTitle: {
+      fontSize: 16,
+      fontWeight: '700',
+      marginBottom: 12,
+      color: colors.TEXT_PRIMARY,
+    },
 
-  /* REQUEST CARD */
-  requestCard: {
-    backgroundColor: '#fff',
-    padding: 14,
-    borderRadius: 12,
-    marginBottom: 12,
-  },
-  requestTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  requestTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  distanceBadge: {
-    fontSize: 12,
-    backgroundColor: COLORS.ACCENT,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-    fontWeight: '600',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: COLORS.GRAY,
-    marginVertical: 10,
-  },
-  label: {
-    fontSize: 13,
-    marginTop: 4,
-    color: COLORS.TEXT_SECONDARY,
-  },
-  value: {
-    fontWeight: '600',
-    color: COLORS.TEXT_PRIMARY,
-  },
-  ctaRow: {
-    marginTop: 10,
-  },
-  ctaHint: {
-    fontSize: 12,
-    color: COLORS.PRIMARY,
-    fontWeight: '600',
-  },
+    /* REQUEST CARD */
+    requestCard: {
+      backgroundColor: '#fff',
+      padding: 14,
+      borderRadius: 12,
+      marginBottom: 12,
+    },
+    requestTopRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    requestTitle: {
+      fontSize: 14,
+      fontWeight: '700',
+    },
+    distanceBadge: {
+      fontSize: 12,
+      backgroundColor: colors.ACCENT,
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      borderRadius: 6,
+      fontWeight: '600',
+    },
+    divider: {
+      height: 1,
+      backgroundColor: colors.GRAY,
+      marginVertical: 10,
+    },
+    label: {
+      fontSize: 13,
+      marginTop: 4,
+      color: colors.TEXT_SECONDARY,
+    },
+    value: {
+      fontWeight: '600',
+      color: colors.TEXT_PRIMARY,
+    },
+    ctaRow: {
+      marginTop: 10,
+    },
+    ctaHint: {
+      fontSize: 12,
+      color: colors.PRIMARY,
+      fontWeight: '600',
+    },
 
-  /* EMPTY STATES */
-  centerState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 40,
-  },
-  centerTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginTop: 8,
-  },
-  centerText: {
-    fontSize: 13,
-    marginTop: 6,
-    color: COLORS.TEXT_SECONDARY,
-    textAlign: 'center',
-  },
+    /* EMPTY STATES */
+    centerState: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 40,
+    },
+    centerTitle: {
+      fontSize: 16,
+      fontWeight: '700',
+      marginTop: 8,
+    },
+    centerText: {
+      fontSize: 13,
+      marginTop: 6,
+      color: colors.TEXT_SECONDARY,
+      textAlign: 'center',
+    },
 
-  /* FOOTER */
-  footer: {
-    marginTop: 20,
-    gap: 10,
-  },
+    /* FOOTER */
+    footer: {
+      marginTop: 20,
+      gap: 10,
+    },
 
-  historyBtn: {
-    padding: 12,
-    borderRadius: 10,
-    backgroundColor: COLORS.LIGHT_GRAY,
-    alignItems: 'center',
-  },
-  historyText: {
-    fontWeight: '600',
-  },
+    historyBtn: {
+      padding: 12,
+      borderRadius: 10,
+      backgroundColor: colors.LIGHT_GRAY,
+      alignItems: 'center',
+    },
+    historyText: {
+      fontWeight: '600',
+    },
 
-  logoutBtn: {
-    padding: 12,
-    borderRadius: 10,
-    backgroundColor: '#FFE5E5',
-    alignItems: 'center',
-  },
-  logoutText: {
-    color: '#C62828',
-    fontWeight: '600',
-  },
-});
+    logoutBtn: {
+      padding: 12,
+      borderRadius: 10,
+      backgroundColor: '#FFE5E5',
+      alignItems: 'center',
+    },
+    logoutText: {
+      color: '#C62828',
+      fontWeight: '600',
+    },
+  });

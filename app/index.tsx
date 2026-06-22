@@ -7,13 +7,11 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuthStore } from '@store/authStore';
-import { COLORS } from '@constants/index';
-import { createGlobalStyles } from '@styles/index';
-import { useThemeStore } from '@store/themeStore';
+import { useTheme } from '@hooks/useTheme'
 
 export default function Index() {
-  const isDark = useThemeStore((s) => s.isDark);
-  const globalStyles = createGlobalStyles(isDark);
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   const {
     initializeAuth,
     isInitialized,
@@ -44,12 +42,12 @@ export default function Index() {
   }, [isInitialized, user]);
 
   return (
-    <View style={globalStyles.container}>
+    <View style={styles.container}>
       <Text style={styles.logo}>UniRide</Text>
 
       <ActivityIndicator
         size="large"
-        color={COLORS.PRIMARY}
+        color={colors.PRIMARY}
       />
 
       <Text style={styles.subtitle}>
@@ -59,21 +57,21 @@ export default function Index() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLORS.SECONDARY,
+    backgroundColor: colors.SECONDARY,
   },
   logo: {
     fontSize: 36,
     fontWeight: '700',
-    color: COLORS.PRIMARY,
+    color: colors.PRIMARY,
     marginBottom: 24,
   },
   subtitle: {
     marginTop: 16,
-    color: COLORS.TEXT_SECONDARY,
+    color: colors.TEXT_SECONDARY,
   },
 });

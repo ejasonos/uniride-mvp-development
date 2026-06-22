@@ -12,18 +12,18 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button } from '@components/Button';
-import { Input } from '@components/Input';
-import { Card } from '@components/Card';
+import Button from '@components/Button';
+import Input from '@components/Input';
+import Card from '@components/Card';
 import { useAuthStore } from '@store/authStore';
 import { useRideStore } from '@store/rideStore';
 import { useChatStore } from '@store/chatStore';
-import { createGlobalStyles } from '@styles/index';
-import { useThemeStore } from '@store/themeStore';
-import { COLORS } from '@constants/index';
+import { Controller } from 'react-hook-form';
+import { useTheme } from '@hooks/useTheme';
+import { globalStyles } from '@styles/globalStyles'
 
 const offerSchema = z.object({
-  offeredPrice: z.string().transform((v) => parseFloat(v)).refine((v) => v > 0, 'Price must be greater than 0'),
+  offeredPrice: z.string(),
   message: z.string().optional(),
 });
 
@@ -36,14 +36,14 @@ export default function SubmitOfferScreen() {
   const { user } = useAuthStore();
   const { createRideOffer, isLoading, rideRequests } = useRideStore();
   const { createConversation } = useChatStore();
-  const [estimatedPrice, setEstimatedPrice] = useState('500');
-  const isDark = useThemeStore((s) => s.isDark);
-  const globalStyles = createGlobalStyles(isDark);
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   const {
     control,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<OfferForm>({
     resolver: zodResolver(offerSchema),
@@ -76,7 +76,7 @@ export default function SubmitOfferScreen() {
       await createRideOffer(
         resolvedRideRequestId,
         user.id,
-        data.offeredPrice,
+        Number(data.offeredPrice),
         data.message || undefined
       );
 
@@ -88,7 +88,7 @@ export default function SubmitOfferScreen() {
   };
 
   const handleQuickPrice = (price: number) => {
-    setEstimatedPrice(price.toString());
+    setValue('offeredPrice', price.toString());
   };
 
   return (
@@ -127,16 +127,23 @@ export default function SubmitOfferScreen() {
           <Text style={globalStyles.heading3}>Your Offer Price</Text>
           <Text style={globalStyles.bodySmall}>Set a competitive price to win this ride</Text>
 
-          <Input
-            label="Offered Price (NGN)"
+          <Controller
             control={control}
             name="offeredPrice"
-            placeholder="e.g., 500"
-            keyboardType="decimal-pad"
-            style={styles.priceInput}
+            render={({ field: { onChange, value } }) => (
+              <Input
+                label="Offered Price (NGN)"
+                value={value}
+                onChangeText={onChange}
+                keyboardType="decimal-pad"
+              />
+            )}
           />
+
           {errors.offeredPrice && (
-            <Text style={globalStyles.errorText}>{errors.offeredPrice.message}</Text>
+            <Text style={globalStyles.errorText}>
+              {errors.offeredPrice.message}
+            </Text>
           )}
 
           <View style={styles.suggestedPrices}>
@@ -176,14 +183,20 @@ export default function SubmitOfferScreen() {
             Add a message to negotiate or provide details about your vehicle
           </Text>
 
-          <Input
-            label="Message"
+          <Controller
             control={control}
             name="message"
-            placeholder="e.g., I have a clean Toyota Camry, very safe driver"
-            multiline={true}
-            numberOfLines={4}
-            style={styles.messageInput}
+            render={({ field: { onChange, value } }) => (
+              <Input
+                label="Message"
+                value={value}
+                onChangeText={onChange}
+                placeholder="e.g., I have a clean Toyota Camry, very safe driver"
+                multiline
+                numberOfLines={4}
+                style={styles.messageInput}
+              />
+            )}
           />
 
           <Text style={[globalStyles.bodySmall, styles.charCount]}>
@@ -205,7 +218,7 @@ export default function SubmitOfferScreen() {
             variant="primary"
             disabled={isLoading}
           />
-          {isLoading && <ActivityIndicator color={COLORS.PRIMARY} style={styles.spinner} />}
+          {isLoading && <ActivityIndicator color={colors.PRIMARY} style={styles.spinner} />}
 
           <Button
             title="Cancel"
@@ -219,72 +232,73 @@ export default function SubmitOfferScreen() {
   );
 };
 
-const styles = StyleSheet.create({
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    backgroundColor: COLORS.PRIMARY,
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: COLORS.SECONDARY,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-  },
-  card: {
-    marginBottom: 16,
-  },
-  detailRow: {
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.LIGHT_GRAY,
-  },
-  priceInput: {
-    marginVertical: 12,
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  suggestedPrices: {
-    marginVertical: 12,
-  },
-  priceButtonsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 8,
-    gap: 8,
-  },
-  priceButton: {
-    flex: 1,
-  },
-  messageInput: {
-    marginVertical: 12,
-    minHeight: 100,
-  },
-  charCount: {
-    marginTop: 6,
-    textAlign: 'right',
-    color: COLORS.TEXT_SECONDARY,
-  },
-  priceCard: {
-    backgroundColor: 'rgba(255, 193, 7, 0.1)',
-  },
-  finalPrice: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: COLORS.ACCENT,
-  },
-  actionContainer: {
-    paddingVertical: 24,
-    gap: 12,
-  },
-  spinner: {
-    marginTop: 8,
-  },
-  cancelButton: {
-    marginTop: 8,
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    header: {
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+      backgroundColor: colors.PRIMARY,
+    },
+    headerTitle: {
+      fontSize: 22,
+      fontWeight: '700',
+      color: colors.SECONDARY,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+    },
+    card: {
+      marginBottom: 16,
+    },
+    detailRow: {
+      paddingVertical: 8,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.LIGHT_GRAY,
+    },
+    priceInput: {
+      marginVertical: 12,
+      fontSize: 18,
+      fontWeight: '700',
+    },
+    suggestedPrices: {
+      marginVertical: 12,
+    },
+    priceButtonsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: 8,
+      gap: 8,
+    },
+    priceButton: {
+      flex: 1,
+    },
+    messageInput: {
+      marginVertical: 12,
+      minHeight: 100,
+    },
+    charCount: {
+      marginTop: 6,
+      textAlign: 'right',
+      color: colors.TEXT_SECONDARY,
+    },
+    priceCard: {
+      backgroundColor: 'rgba(255, 193, 7, 0.1)',
+    },
+    finalPrice: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: colors.ACCENT,
+    },
+    actionContainer: {
+      paddingVertical: 24,
+      gap: 12,
+    },
+    spinner: {
+      marginTop: 8,
+    },
+    cancelButton: {
+      marginTop: 8,
+    },
+  });

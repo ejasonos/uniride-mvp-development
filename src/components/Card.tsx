@@ -1,26 +1,40 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { COLORS } from '@constants/index';
+
+import { useTheme } from '@hooks/useTheme';
 
 interface CardProps {
   children: React.ReactNode;
-  style?: ViewStyle;
+  style?: ViewStyle | ViewStyle[];
 }
 
-export const Card: React.FC<CardProps> = ({ children, style }) => {
-  return <View style={[styles.card, style]}>{children}</View>;
-};
+export default function Card({
+  children,
+  style,
+}: CardProps) {
+  const { colors } = useTheme();
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: COLORS.SECONDARY,
-    borderRadius: 12,
-    padding: 12,
-    marginVertical: 8,
-    elevation: 2,
-    shadowColor: COLORS.DARK,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-});
+  const styles = createStyles(colors);
+
+  return <View style={[styles.card, style]}>{children}</View>;
+}
+
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    card: {
+      backgroundColor: colors.CARD,
+      borderRadius: 12,
+      padding: 12,
+      marginVertical: 8,
+
+      elevation: 2,
+
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+  });

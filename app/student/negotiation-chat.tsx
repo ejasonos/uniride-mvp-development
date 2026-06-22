@@ -16,10 +16,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuthStore } from '@store/authStore';
 import { useChatStore } from '@store/chatStore';
 import { useRideStore } from '@store/rideStore';
-
-import { createGlobalStyles } from '@styles/index';
-import { useThemeStore } from '@store/themeStore';
-import { COLORS } from '@constants/index';
+import { useTheme } from '@hooks/useTheme'
+import { globalStyles } from '@styles/globalStyles';
 
 export default function NegotiationChatScreen() {
   const router = useRouter();
@@ -40,9 +38,8 @@ export default function NegotiationChatScreen() {
   const convoMessages =
     messages.filter((m) => m.conversation_id === convo?.id) || [];
 
-
-  const isDark = useThemeStore((s) => s.isDark);
-  const globalStyles = createGlobalStyles(isDark);
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
 
   useEffect(() => {
     if (convo?.id) subscribeToMessages(convo.id);
@@ -101,7 +98,7 @@ export default function NegotiationChatScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={globalStyles.container}>
 
       {/* TOP CONTEXT BAR (Uber-style) */}
       <View style={styles.offerBar}>
@@ -173,12 +170,7 @@ export default function NegotiationChatScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-
-  container: {
-    flex: 1,
-    backgroundColor: '#F6F7F9',
-  },
+const createStyles = (colors: any) => StyleSheet.create({
 
   flex: {
     flex: 1,
@@ -187,7 +179,7 @@ const styles = StyleSheet.create({
   /* OFFER BAR (Uber negotiation header) */
   offerBar: {
     padding: 14,
-    backgroundColor: COLORS.PRIMARY,
+    backgroundColor: colors.PRIMARY,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -198,7 +190,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   offerPrice: {
-    color: COLORS.ACCENT,
+    color: colors.ACCENT,
     fontSize: 16,
     fontWeight: '700',
   },
@@ -224,12 +216,12 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   bubbleMine: {
-    backgroundColor: COLORS.PRIMARY,
+    backgroundColor: colors.PRIMARY,
   },
 
   msgText: {
     fontSize: 14,
-    color: COLORS.TEXT_PRIMARY,
+    color: colors.TEXT_PRIMARY,
   },
   msgTextMine: {
     color: '#fff',
@@ -280,7 +272,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   sendBtn: {
-    backgroundColor: COLORS.PRIMARY,
+    backgroundColor: colors.PRIMARY,
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 10,
@@ -299,7 +291,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   acceptBtn: {
-    backgroundColor: COLORS.ACCENT,
+    backgroundColor: colors.ACCENT,
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
@@ -307,6 +299,6 @@ const styles = StyleSheet.create({
   acceptText: {
     fontWeight: '700',
     fontSize: 15,
-    color: COLORS.TEXT_PRIMARY,
+    color: colors.TEXT_PRIMARY,
   },
 });

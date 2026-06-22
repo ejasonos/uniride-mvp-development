@@ -7,7 +7,8 @@ import {
   ViewStyle,
   TextStyle,
 } from 'react-native';
-import { COLORS } from '@constants/index';
+
+import { useTheme } from '@hooks/useTheme';
 
 interface ButtonProps {
   title: string;
@@ -19,7 +20,7 @@ interface ButtonProps {
   textStyle?: TextStyle;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export default function Button({
   title,
   onPress,
   variant = 'primary',
@@ -27,47 +28,79 @@ export const Button: React.FC<ButtonProps> = ({
   disabled = false,
   style,
   textStyle,
-}) => {
-  const buttonStyle = variant === 'primary' ? styles.primary : styles.secondary;
-  const textColor = variant === 'primary' ? COLORS.SECONDARY : COLORS.TEXT_PRIMARY;
+}: ButtonProps) {
+  const { colors } = useTheme();
+
+  const styles = createStyles(colors);
 
   return (
     <TouchableOpacity
-      style={[styles.button, buttonStyle, disabled && styles.disabled, style]}
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.7}
+      style={[
+        styles.button,
+        variant === 'primary'
+          ? styles.primaryButton
+          : styles.secondaryButton,
+        disabled && styles.disabled,
+        style,
+      ]}
     >
       {loading ? (
-        <ActivityIndicator color={textColor} size="small" />
+        <ActivityIndicator
+          color={
+            variant === 'primary'
+              ? colors.SECONDARY
+              : colors.TEXT_PRIMARY
+          }
+        />
       ) : (
-        <Text style={[styles.text, { color: textColor }, textStyle]}>{title}</Text>
+        <Text
+          style={[
+            styles.text,
+            {
+              color:
+                variant === 'primary'
+                  ? colors.SECONDARY
+                  : colors.TEXT_PRIMARY,
+            },
+            textStyle,
+          ]}
+        >
+          {title}
+        </Text>
       )}
     </TouchableOpacity>
   );
-};
+}
 
-const styles = StyleSheet.create({
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: 48,
-    marginVertical: 8,
-  },
-  primary: {
-    backgroundColor: COLORS.PRIMARY,
-  },
-  secondary: {
-    backgroundColor: COLORS.LIGHT_GRAY,
-  },
-  disabled: {
-    opacity: 0.5,
-  },
-  text: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    button: {
+      paddingVertical: 12,
+      paddingHorizontal: 20,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+
+    primaryButton: {
+      backgroundColor: colors.PRIMARY,
+    },
+
+    secondaryButton: {
+      backgroundColor: colors.CARD,
+      borderWidth: 1,
+      borderColor: colors.BORDER,
+    },
+
+    disabled: {
+      opacity: 0.5,
+    },
+
+    text: {
+      fontSize: 16,
+      fontWeight: '600',
+    },
+  });

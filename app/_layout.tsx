@@ -5,15 +5,15 @@ import { Appearance } from 'react-native';
 import { useThemeStore } from '@store/themeStore';
 
 export default function RootLayout() {
-  const setDarkMode = useThemeStore((s) => s.setDarkMode);
+  const setMode = useThemeStore((s) => s.setMode);
 
   useEffect(() => {
-    const listener = Appearance.addChangeListener(({ colorScheme }) => {
-      setDarkMode(colorScheme === 'dark');
+    const sub = Appearance.addChangeListener(({ colorScheme }) => {
+      setMode('system');
     });
 
-    return () => listener.remove();
-  }, [setDarkMode]);
+    return () => sub.remove();
+  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

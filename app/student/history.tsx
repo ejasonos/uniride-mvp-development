@@ -10,21 +10,20 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button } from '@components/Button';
-import { Card } from '@components/Card';
+import Button from '@components/Button';
+import Card from '@components/Card';
 import { useRideStore } from '@store/rideStore';
 import { useAuthStore } from '@store/authStore';
-import { createGlobalStyles } from '@styles/index';
-import { useThemeStore } from '@store/themeStore';
-import { COLORS } from '@constants/index';
+import { useTheme } from '@hooks/useTheme'
+import { globalStyles } from '@styles/globalStyles'
 
 export default function RideHistoryScreen() {
   const router = useRouter();
   const { user } = useAuthStore();
   const { rides, isLoading, fetchStudentRideHistory } = useRideStore();
   const [refreshing, setRefreshing] = React.useState(false);
-  const isDark = useThemeStore((s) => s.isDark);
-  const globalStyles = createGlobalStyles(isDark);
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
 
   useEffect(() => {
     if (user?.id) {
@@ -43,13 +42,13 @@ export default function RideHistoryScreen() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return COLORS.SUCCESS || '#4CAF50';
+        return colors.SUCCESS || '#4CAF50';
       case 'in_progress':
-        return COLORS.ACCENT;
+        return colors.ACCENT;
       case 'cancelled':
-        return COLORS.ERROR || '#f44336';
+        return colors.ERROR || '#f44336';
       default:
-        return COLORS.GRAY;
+        return colors.GRAY;
     }
   };
 
@@ -105,12 +104,12 @@ export default function RideHistoryScreen() {
       </View>
 
       {isLoading && rides.length === 0 ? (
-        <View style={globalStyles.columnCenter} style={styles.centerContent}>
-          <ActivityIndicator size="large" color={COLORS.PRIMARY} />
+        <View style={[globalStyles.columnCenter, styles.centerContent]}>
+          <ActivityIndicator size="large" color={colors.PRIMARY} />
           <Text style={[globalStyles.bodyMedium, styles.loadingText]}>Loading rides...</Text>
         </View>
       ) : rides.length === 0 ? (
-        <View style={globalStyles.columnCenter} style={styles.centerContent}>
+        <View style={[globalStyles.columnCenter, styles.centerContent]}>
           <Text style={globalStyles.heading3}>No rides yet</Text>
           <Text style={[globalStyles.bodySmall, styles.emptyText]}>
             Request a ride to get started
@@ -132,7 +131,7 @@ export default function RideHistoryScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={handleRefresh}
-              colors={[COLORS.PRIMARY]}
+              colors={[colors.PRIMARY]}
             />
           }
         />
@@ -141,11 +140,11 @@ export default function RideHistoryScreen() {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   header: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: COLORS.PRIMARY,
+    backgroundColor: colors.PRIMARY,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -153,7 +152,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: COLORS.SECONDARY,
+    color: colors.SECONDARY,
   },
   centerContent: {
     flex: 1,
@@ -181,11 +180,11 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 10,
     fontWeight: '700',
-    color: COLORS.SECONDARY,
+    color: colors.SECONDARY,
   },
   divider: {
     height: 1,
-    backgroundColor: COLORS.GRAY,
+    backgroundColor: colors.GRAY,
     marginVertical: 12,
   },
   routeInfo: {
@@ -201,19 +200,19 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.ACCENT,
+    color: colors.ACCENT,
   },
   detailsButton: {
     paddingVertical: 10,
     paddingHorizontal: 12,
-    backgroundColor: COLORS.LIGHT_GRAY,
+    backgroundColor: colors.LIGHT_GRAY,
     borderRadius: 6,
     alignItems: 'center',
   },
   detailsButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.TEXT_PRIMARY,
+    color: colors.TEXT_PRIMARY,
   },
   emptyText: {
     marginVertical: 12,

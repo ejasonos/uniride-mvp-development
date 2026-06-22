@@ -1,10 +1,13 @@
-import { useThemeStore } from '@store/themeStore';
-import { DARK_THEME, LIGHT_THEME } from '@constants/index';
+import { useThemeStore, getIsDark } from '@store/themeStore';
+import { LIGHT_THEME, DARK_THEME } from '@constants/index';
 
 export const useTheme = () => {
-  const isDark = useThemeStore((s) => s.isDark);
+  const mode = useThemeStore((s) => s.mode);
+
+  const isDark = getIsDark(mode);
 
   return {
+    mode,
     isDark,
     colors: isDark ? DARK_THEME : LIGHT_THEME,
   };

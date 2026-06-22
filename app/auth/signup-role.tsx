@@ -7,16 +7,15 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button } from '@components/Button';
-import { Card } from '@components/Card';
-import { COLORS } from '@constants/index';
-import { createGlobalStyles } from '@styles/index';
-import { useThemeStore } from '@store/themeStore';
+import Button from '@components/Button';
+import Card from '@components/Card';
+import { useTheme } from '@hooks/useTheme';
+import { globalStyles } from '@/styles/globalStyles';
 
 export default function SignUpRoleScreen() {
   const router = useRouter();
-  const isDark = useThemeStore((s) => s.isDark);
-  const globalStyles = createGlobalStyles(isDark);
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   return (
     <ScrollView
@@ -89,85 +88,86 @@ export default function SignUpRoleScreen() {
   );
 };
 
-const styles = StyleSheet.create({
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-  },
-  header: {
-    marginBottom: 32,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: COLORS.TEXT_PRIMARY,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: COLORS.TEXT_SECONDARY,
-  },
-  optionsContainer: {
-    flex: 1,
-    marginBottom: 24,
-  },
-  optionCard: {
-    marginVertical: 12,
-    paddingVertical: 20,
-    paddingHorizontal: 16,
-  },
-  optionContent: {
-    alignItems: 'center',
-  },
-  optionEmoji: {
-    fontSize: 48,
-    marginBottom: 12,
-  },
-  optionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: COLORS.TEXT_PRIMARY,
-    marginBottom: 8,
-  },
-  optionDescription: {
-    fontSize: 14,
-    color: COLORS.TEXT_SECONDARY,
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  optionFeatures: {
-    width: '100%',
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.GRAY,
-  },
-  feature: {
-    fontSize: 12,
-    color: COLORS.TEXT_SECONDARY,
-    marginVertical: 4,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    marginTop: 24,
-    paddingBottom: 24,
-  },
-  footerText: {
-    fontSize: 14,
-    color: COLORS.TEXT_SECONDARY,
-  },
-  signInButton: {
-    paddingVertical: 0,
-    paddingHorizontal: 2,
-    marginVertical: 0,
-  },
-  signInText: {
-    fontSize: 14,
-    color: COLORS.PRIMARY,
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    scrollContent: {
+      flexGrow: 1,
+      paddingHorizontal: 16,
+      paddingVertical: 24,
+    },
+    header: {
+      marginBottom: 32,
+      alignItems: 'center',
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: '700',
+      color: colors.TEXT_PRIMARY,
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 14,
+      color: colors.TEXT_SECONDARY,
+    },
+    optionsContainer: {
+      flex: 1,
+      marginBottom: 24,
+    },
+    optionCard: {
+      marginVertical: 12,
+      paddingVertical: 20,
+      paddingHorizontal: 16,
+    },
+    optionContent: {
+      alignItems: 'center',
+    },
+    optionEmoji: {
+      fontSize: 48,
+      marginBottom: 12,
+    },
+    optionTitle: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: colors.TEXT_PRIMARY,
+      marginBottom: 8,
+    },
+    optionDescription: {
+      fontSize: 14,
+      color: colors.TEXT_SECONDARY,
+      textAlign: 'center',
+      marginBottom: 12,
+    },
+    optionFeatures: {
+      width: '100%',
+      marginTop: 12,
+      paddingTop: 12,
+      borderTopWidth: 1,
+      borderTopColor: colors.GRAY,
+    },
+    feature: {
+      fontSize: 12,
+      color: colors.TEXT_SECONDARY,
+      marginVertical: 4,
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      marginTop: 24,
+      paddingBottom: 24,
+    },
+    footerText: {
+      fontSize: 14,
+      color: colors.TEXT_SECONDARY,
+    },
+    signInButton: {
+      paddingVertical: 0,
+      paddingHorizontal: 2,
+      marginVertical: 0,
+    },
+    signInText: {
+      fontSize: 14,
+      color: colors.PRIMARY,
+    },
+  });

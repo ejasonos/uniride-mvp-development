@@ -1,19 +1,3 @@
-// Colors
-export const COLORS = {
-  PRIMARY: '#0057D9',
-  SECONDARY: '#FFFFFF',
-  ACCENT: '#FFC107',
-  DARK: '#000000',
-  LIGHT_GRAY: '#F5F5F5',
-  GRAY: '#E0E0E0',
-  DARK_GRAY: '#666666',
-  TEXT_PRIMARY: '#000000',
-  TEXT_SECONDARY: '#666666',
-  ERROR: '#D32F2F',
-  SUCCESS: '#388E3C',
-  WARNING: '#F57C00',
-} as const;
-
 export const LIGHT_THEME = {
   PRIMARY: '#0057D9',
   SECONDARY: '#FFFFFF',
@@ -29,6 +13,12 @@ export const LIGHT_THEME = {
 
   ERROR: '#D32F2F',
   SUCCESS: '#388E3C',
+
+  GRAY: '#E0E0E0',
+  DARK_GRAY: '#666666',
+  
+  DARK: '#000000',
+  LIGHT_GRAY: '#F5F5F5',
 };
 
 export const DARK_THEME = {
@@ -46,6 +36,12 @@ export const DARK_THEME = {
 
   ERROR: '#FF5A5A',
   SUCCESS: '#4CAF50',
+  
+  GRAY: '#E0E0E0',
+  DARK_GRAY: '#666666',
+
+  DARK: '#000000',
+  LIGHT_GRAY: '#F5F5F5',
 };
 
 // Supabase
@@ -68,7 +64,7 @@ export const VEHICLE_TYPES = [
   'Truck',
 ] as const;
 
-// Status Colors
+// Status colors
 export const STATUS_COLORS = {
   pending: '#FFC107',
   negotiating: '#2196F3',
@@ -77,14 +73,6 @@ export const STATUS_COLORS = {
   completed: '#4CAF50',
   cancelled: '#F44336',
 } as const;
-
-// Map Settings
-export const DEFAULT_MAP_REGION = {
-  latitude: 0.3476,
-  longitude: 32.5825,
-  latitudeDelta: 0.0922,
-  longitudeDelta: 0.0421,
-};
 
 // Location Settings
 export const LOCATION_ACCURACY = 6; // High accuracy

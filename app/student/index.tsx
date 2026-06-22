@@ -15,10 +15,11 @@ import { useAuthStore } from '@store/authStore';
 import { useRideStore } from '@store/rideStore';
 import { useLocationStore } from '@store/locationStore';
 
-import { COLORS } from '@constants/index';
+import { useTheme } from '@hooks/useTheme'
+import { globalStyles } from '@styles/globalStyles'
 
-import { useThemeStore } from '@store/themeStore';
-import { createGlobalStyles } from '@styles/index';
+import ThemeToggle from '@components/ThemeToggle';
+import { UNIBEN_REGION } from '@constants/maps';
 
 export default function StudentHomeScreen() {
   const router = useRouter();
@@ -26,35 +27,28 @@ export default function StudentHomeScreen() {
   const { currentRide } = useRideStore();
   const { currentLocation } = useLocationStore();
 
-  const isDark = useThemeStore((s) => s.isDark);
-  const globalStyles = createGlobalStyles(isDark);
-
   const [mapReady, setMapReady] = useState(false);
 
   const hasActiveRide = currentRide && currentRide.status !== 'completed';
 
   const go = (path: string) => router.push(path);
 
-  const initialRegion = {
-    latitude: currentLocation?.latitude || 6.5244,
-    longitude: currentLocation?.longitude || 3.3792,
-    latitudeDelta: 0.04,
-    longitudeDelta: 0.04,
-  };
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
 
   return (
     <SafeAreaView style={globalStyles.container}>
 
       {/* HEADER */}
       <View style={styles.header}>
-        <View>
-          <Text style={styles.greeting}>Hi, {user?.full_name}</Text>
-          <Text style={styles.subText}>Where to next?</Text>
-        </View>
+        <Text style={styles.greeting}>Hi, {user?.full_name}</Text>
 
-        <TouchableOpacity onPress={signOut}>
-          <Text style={styles.logout}>Logout</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <ThemeToggle />
+          <TouchableOpacity onPress={signOut}>
+            <Text style={styles.logout}>Logout</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -95,12 +89,12 @@ export default function StudentHomeScreen() {
         {/* MAP (context only, not dominant) */}
         <View style={styles.mapCard}>
           {mapReady ? null : (
-            <ActivityIndicator color={COLORS.PRIMARY} />
+            <ActivityIndicator color={colors.PRIMARY} />
           )}
 
           <MapView
             style={styles.map}
-            initialRegion={initialRegion}
+            initialRegion={UNIBEN_REGION}
             onMapReady={() => setMapReady(true)}
           >
             {currentLocation && (
@@ -128,7 +122,7 @@ export default function StudentHomeScreen() {
 
           <TouchableOpacity
             style={styles.chip}
-            onPress={() => go('/student/negotiation-chat')}
+            onPress={() => router.push('/student/negotiation-chat')}
           >
             <Text style={styles.chipText}>Chat</Text>
           </TouchableOpacity>
@@ -140,14 +134,7 @@ export default function StudentHomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-
-  /* CONTAINER */
-  container: {
-    flex: 1,
-    backgroundColor: '#F6F7F9',
-  },
-
+const createStyles = (colors: any) => StyleSheet.create({
   /* HEADER (Google clean bar) */
   header: {
     padding: 16,
@@ -158,11 +145,11 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.TEXT_PRIMARY,
+    color: colors.TEXT_PRIMARY,
   },
   subText: {
     fontSize: 13,
-    color: COLORS.TEXT_SECONDARY,
+    color: colors.TEXT_SECONDARY,
     marginTop: 2,
   },
   logout: {
@@ -189,12 +176,12 @@ const styles = StyleSheet.create({
   statusText: {
     marginTop: 6,
     fontSize: 13,
-    color: COLORS.TEXT_SECONDARY,
+    color: colors.TEXT_SECONDARY,
   },
 
   primaryBtn: {
     marginTop: 14,
-    backgroundColor: COLORS.PRIMARY,
+    backgroundColor: colors.PRIMARY,
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: 'center',
@@ -228,11 +215,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: COLORS.GRAY,
+    borderColor: colors.GRAY,
   },
   chipText: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.TEXT_PRIMARY,
+    color: colors.TEXT_PRIMARY,
   },
 });

@@ -10,14 +10,13 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import MapView, { Marker } from 'react-native-maps';
-import { Button } from '@components/Button';
-import { Card } from '@components/Card';
+import Button from '@components/Button';
+import Card from '@components/Card';
 import { useRideStore } from '@store/rideStore';
 import { useLocationStore } from '@store/locationStore';
 import { useAuthStore } from '@store/authStore';
-import { createGlobalStyles } from '@styles/index';
-import { useThemeStore } from '@store/themeStore';
-import { COLORS } from '@constants/index';
+import { useTheme } from '@hooks/useTheme'
+import { globalStyles } from '@styles/globalStyles';
 
 export default function RideTrackingScreen() {
   const router = useRouter();
@@ -25,8 +24,8 @@ export default function RideTrackingScreen() {
   const { driverLocation, subscribeToDriverLocation, updateDriverLocation } = useLocationStore();
   const { user } = useAuthStore();
   const [mapReady, setMapReady] = useState(false);
-  const isDark = useThemeStore((s) => s.isDark);
-  const globalStyles = createGlobalStyles(isDark);
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
 
   useEffect(() => {
     if (currentRide?.driver_id) {
@@ -94,7 +93,7 @@ export default function RideTrackingScreen() {
           </MapView>
         ) : (
           <View style={[globalStyles.columnCenter, styles.mapPlaceholder]}>
-            <ActivityIndicator color={COLORS.PRIMARY} />
+            <ActivityIndicator color={colors.PRIMARY} />
             <Text style={globalStyles.bodySmall}>Loading map...</Text>
           </View>
         )}
@@ -144,11 +143,11 @@ export default function RideTrackingScreen() {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   header: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: COLORS.PRIMARY,
+    backgroundColor: colors.PRIMARY,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -156,12 +155,12 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.SECONDARY,
+    color: colors.SECONDARY,
   },
   status: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.ACCENT,
+    color: colors.ACCENT,
   },
   mapContainer: {
     height: 300,
@@ -187,21 +186,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.LIGHT_GRAY,
+    borderBottomColor: colors.LIGHT_GRAY,
   },
   statusBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    backgroundColor: COLORS.ACCENT,
+    backgroundColor: colors.ACCENT,
     borderRadius: 4,
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.TEXT_PRIMARY,
+    color: colors.TEXT_PRIMARY,
   },
   price: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.ACCENT,
+    color: colors.ACCENT,
   },
   actionContainer: {
     paddingVertical: 24,

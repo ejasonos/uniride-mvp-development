@@ -6,7 +6,8 @@ import {
   StyleSheet,
   TextInputProps,
 } from 'react-native';
-import { COLORS } from '@constants/index';
+
+import { useTheme } from '@hooks/useTheme';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -14,50 +15,71 @@ interface InputProps extends TextInputProps {
   containerStyle?: any;
 }
 
-export const Input: React.FC<InputProps> = ({
+export default function Input({
   label,
   error,
   containerStyle,
   ...props
-}) => {
+}: InputProps) {
+  const { colors } = useTheme();
+
+  const styles = createStyles(colors);
+
   return (
     <View style={containerStyle}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && (
+        <Text style={styles.label}>
+          {label}
+        </Text>
+      )}
+
       <TextInput
-        style={[styles.input, error && styles.inputError]}
-        placeholderTextColor={COLORS.TEXT_SECONDARY}
+        style={[
+          styles.input,
+          error && styles.inputError,
+        ]}
+        placeholderTextColor={colors.TEXT_SECONDARY}
         {...props}
       />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+
+      {error && (
+        <Text style={styles.errorText}>
+          {error}
+        </Text>
+      )}
     </View>
   );
-};
+}
 
-const styles = StyleSheet.create({
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.TEXT_PRIMARY,
-    marginBottom: 4,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: COLORS.GRAY,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    fontSize: 14,
-    color: COLORS.TEXT_PRIMARY,
-    marginVertical: 8,
-    backgroundColor: COLORS.SECONDARY,
-  },
-  inputError: {
-    borderColor: COLORS.ERROR,
-    borderWidth: 1.5,
-  },
-  errorText: {
-    fontSize: 12,
-    color: COLORS.ERROR,
-    marginTop: 4,
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    label: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: colors.TEXT_PRIMARY,
+      marginBottom: 4,
+    },
+
+    input: {
+      borderWidth: 1,
+      borderColor: colors.BORDER,
+      borderRadius: 8,
+      paddingVertical: 12,
+      paddingHorizontal: 12,
+      fontSize: 14,
+      color: colors.TEXT_PRIMARY,
+      marginVertical: 8,
+      backgroundColor: colors.CARD,
+    },
+
+    inputError: {
+      borderColor: colors.ERROR,
+      borderWidth: 1.5,
+    },
+
+    errorText: {
+      fontSize: 12,
+      color: colors.ERROR,
+      marginTop: 4,
+    },
+  });

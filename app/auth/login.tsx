@@ -3,18 +3,19 @@ import {
   ScrollView,
   View,
   Text,
+  TouchableOpacity,
   StyleSheet,
   Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button } from '@components/Button';
-import { Input } from '@components/Input';
+import Button from '@components/Button';
+import Input from '@components/Input';
 import { useAuthStore } from '@store/authStore';
-import { useThemeStore } from '@store/themeStore';
-import { createGlobalStyles } from '@styles/index';
-import { COLORS } from '@constants/index';
+import ThemeToggle from '@/components/ThemeToggle';
+import { useTheme } from '@hooks/useTheme';
+import { globalStyles } from '@/styles/globalStyles';
 
 export default function LoginScreeen() {
   const router = useRouter();
@@ -22,9 +23,8 @@ export default function LoginScreeen() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { signIn, isLoading } = useAuthStore();
-
-  const isDark = useThemeStore((s) => s.isDark);
-  const globalStyles = createGlobalStyles(isDark);
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -79,6 +79,13 @@ export default function LoginScreeen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>Welcome Back</Text>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <ThemeToggle />
+          </View>
+        </View>
+
+        <View style={styles.header}>
           <Text style={styles.subtitle}>Sign in to your UniRide account</Text>
         </View>
 
@@ -130,55 +137,56 @@ export default function LoginScreeen() {
   );
 };
 
-const styles = StyleSheet.create({
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-    justifyContent: 'center',
-  },
-  header: {
-    marginBottom: 32,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: COLORS.TEXT_PRIMARY,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: COLORS.TEXT_SECONDARY,
-  },
-  form: {
-    marginBottom: 24,
-  },
-  inputContainer: {
-    marginVertical: 8,
-  },
-  button: {
-    marginVertical: 16,
-    marginHorizontal: 0,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    marginTop: 24,
-  },
-  footerText: {
-    fontSize: 14,
-    color: COLORS.TEXT_SECONDARY,
-  },
-  signUpButton: {
-    paddingVertical: 0,
-    paddingHorizontal: 15,
-    marginVertical: 0,
-  },
-  signUpText: {
-    fontSize: 14,
-    color: COLORS.PRIMARY,
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    scrollContent: {
+      flexGrow: 1,
+      paddingHorizontal: 16,
+      paddingVertical: 24,
+      justifyContent: 'center',
+    },
+    header: {
+      marginBottom: 32,
+      alignItems: 'center',
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: '700',
+      color: colors.TEXT_PRIMARY,
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 14,
+      color: colors.TEXT_SECONDARY,
+    },
+    form: {
+      marginBottom: 24,
+    },
+    inputContainer: {
+      marginVertical: 8,
+    },
+    button: {
+      marginVertical: 16,
+      marginHorizontal: 0,
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      marginTop: 24,
+    },
+    footerText: {
+      fontSize: 14,
+      color: colors.TEXT_SECONDARY,
+    },
+    signUpButton: {
+      paddingVertical: 0,
+      paddingHorizontal: 15,
+      marginVertical: 0,
+    },
+    signUpText: {
+      fontSize: 14,
+      color: colors.PRIMARY,
+    },
+  });

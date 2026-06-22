@@ -11,20 +11,19 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Button } from '@components/Button';
-import { Card } from '@components/Card';
+import Button from '@components/Button';
+import Card from '@components/Card';
 import { useRideStore } from '@store/rideStore';
-import { createGlobalStyles } from '@styles/index';
-import { useThemeStore } from '@store/themeStore';
-import { COLORS } from '@constants/index';
+import { useTheme } from '@hooks/useTheme'
+import { globalStyles } from '@styles/globalStyles'
 
 export default function RideOffersScreen() {
   const router = useRouter();
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   const { rideRequestId } = useLocalSearchParams<{ rideRequestId?: string | string[] }>();
   const resolvedRideRequestId = Array.isArray(rideRequestId) ? rideRequestId[0] : rideRequestId;
   const { currentRideRequest, rideOffers, isLoading, fetchRideOffers } = useRideStore();
-  const isDark = useThemeStore((s) => s.isDark);
-  const globalStyles = createGlobalStyles(isDark);
   useEffect(() => {
     const requestId = resolvedRideRequestId || currentRideRequest?.id;
 
@@ -85,7 +84,7 @@ export default function RideOffersScreen() {
           <Text style={styles.headerTitle}>Available Offers</Text>
         </View>
         <View style={[globalStyles.columnCenter, styles.centerContent]}>
-          <ActivityIndicator size="large" color={COLORS.PRIMARY} />
+          <ActivityIndicator size="large" color={colors.PRIMARY} />
           <Text style={[globalStyles.bodyMedium, styles.loadingText]}>Waiting for offers...</Text>
         </View>
       </SafeAreaView>
@@ -103,7 +102,7 @@ export default function RideOffersScreen() {
           <View style={[globalStyles.columnCenter, styles.centerContent]}>
             <Text style={globalStyles.bodyMedium}>No offers yet</Text>
             <Text style={globalStyles.bodySmall}>Drivers will see your request shortly</Text>
-            <ActivityIndicator color={COLORS.PRIMARY} style={styles.spinner} />
+            <ActivityIndicator color={colors.PRIMARY} style={styles.spinner} />
           </View>
         ) : (
           <FlatList
@@ -119,16 +118,16 @@ export default function RideOffersScreen() {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   header: {
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: COLORS.PRIMARY,
+    backgroundColor: colors.PRIMARY,
   },
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: COLORS.SECONDARY,
+    color: colors.SECONDARY,
   },
   content: {
     flex: 1,
@@ -146,22 +145,22 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.ACCENT,
+    color: colors.ACCENT,
   },
   divider: {
     height: 1,
-    backgroundColor: COLORS.GRAY,
+    backgroundColor: colors.GRAY,
     marginVertical: 12,
   },
   messageContainer: {
     marginBottom: 12,
-    backgroundColor: COLORS.LIGHT_GRAY,
+    backgroundColor: colors.LIGHT_GRAY,
     padding: 10,
     borderRadius: 6,
   },
   message: {
     marginTop: 6,
-    color: COLORS.TEXT_PRIMARY,
+    color: colors.TEXT_PRIMARY,
     fontWeight: '500',
   },
   buttonContainer: {

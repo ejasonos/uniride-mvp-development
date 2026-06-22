@@ -10,12 +10,12 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
-import { Button } from '@components/Button';
-import { Input } from '@components/Input';
+import Button from '@components/Button';
+import Input from '@components/Input';
 import { useAuthStore } from '@store/authStore';
-import { createGlobalStyles } from '@styles/index';
-import { useThemeStore } from '@store/themeStore';
-import { COLORS, VEHICLE_TYPES } from '@constants/index';
+import { useTheme } from '@hooks/useTheme';
+import { VEHICLE_TYPES } from '@constants/index';
+import { globalStyles } from '@styles/globalStyles';
 
 export default function DriverSignUpScreen() {
   const router = useRouter();
@@ -29,8 +29,8 @@ export default function DriverSignUpScreen() {
   const [universityId, setUniversityId] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { signUp, isLoading } = useAuthStore();
-  const isDark = useThemeStore((s) => s.isDark);
-  const globalStyles = createGlobalStyles(isDark);
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -211,69 +211,70 @@ export default function DriverSignUpScreen() {
   );
 };
 
-const styles = StyleSheet.create({
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-  },
-  header: {
-    marginBottom: 24,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: COLORS.TEXT_PRIMARY,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: COLORS.TEXT_SECONDARY,
-  },
-  form: {
-    marginBottom: 24,
-  },
-  inputContainer: {
-    marginVertical: 8,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.TEXT_PRIMARY,
-    marginBottom: 4,
-  },
-  picker: {
-    borderWidth: 1,
-    borderColor: COLORS.GRAY,
-    borderRadius: 8,
-    marginVertical: 8,
-    backgroundColor: COLORS.SECONDARY,
-    color: COLORS.TEXT_PRIMARY,
-  },
-  button: {
-    marginVertical: 16,
-    marginHorizontal: 0,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    marginTop: 24,
-    paddingBottom: 24,
-  },
-  footerText: {
-    fontSize: 14,
-    color: COLORS.TEXT_SECONDARY,
-  },
-  signInButton: {
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-    marginVertical: 0,
-  },
-  signInText: {
-    fontSize: 14,
-    color: COLORS.PRIMARY,
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    scrollContent: {
+      flexGrow: 1,
+      paddingHorizontal: 16,
+      paddingVertical: 24,
+    },
+    header: {
+      marginBottom: 24,
+      alignItems: 'center',
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: colors.TEXT_PRIMARY,
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 14,
+      color: colors.TEXT_SECONDARY,
+    },
+    form: {
+      marginBottom: 24,
+    },
+    inputContainer: {
+      marginVertical: 8,
+    },
+    label: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: colors.TEXT_PRIMARY,
+      marginBottom: 4,
+    },
+    picker: {
+      borderWidth: 1,
+      borderColor: colors.GRAY,
+      borderRadius: 8,
+      marginVertical: 8,
+      backgroundColor: colors.SECONDARY,
+      color: colors.TEXT_PRIMARY,
+    },
+    button: {
+      marginVertical: 16,
+      marginHorizontal: 0,
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      marginTop: 24,
+      paddingBottom: 24,
+    },
+    footerText: {
+      fontSize: 14,
+      color: colors.TEXT_SECONDARY,
+    },
+    signInButton: {
+      paddingVertical: 0,
+      paddingHorizontal: 0,
+      marginVertical: 0,
+    },
+    signInText: {
+      fontSize: 14,
+      color: colors.PRIMARY,
+    },
+  });
