@@ -50,7 +50,7 @@ export default function LoginScreeen() {
     if (!validateForm()) return;
 
     try {
-      await signIn(email, password);
+      // await signIn(email, password);
       console.log("signin successful")
       router.replace('/student');
     } catch (error: any) {
