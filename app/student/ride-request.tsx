@@ -11,11 +11,12 @@ import {
 import MapPicker from '@components/MapPicker';
 
 import { useTheme } from '@hooks/useTheme'
-import { globalStyles } from '@/styles/globalStyles';
+import { createGlobalStyles } from '@/styles/globalStyles';
 
 export default function RideRequestScreen() {
   const { colors } = useTheme()
   const styles = createStyles(colors)
+  const globalStyles = createGlobalStyles(colors)
 
   const [mapMode, setMapMode] = useState<'pickup' | 'destination' | null>(null);
 

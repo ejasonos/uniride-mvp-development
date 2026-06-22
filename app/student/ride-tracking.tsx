@@ -16,7 +16,7 @@ import { useRideStore } from '@store/rideStore';
 import { useLocationStore } from '@store/locationStore';
 import { useAuthStore } from '@store/authStore';
 import { useTheme } from '@hooks/useTheme'
-import { globalStyles } from '@styles/globalStyles';
+import { createGlobalStyles } from '@styles/globalStyles';
 
 export default function RideTrackingScreen() {
   const router = useRouter();
@@ -26,6 +26,7 @@ export default function RideTrackingScreen() {
   const [mapReady, setMapReady] = useState(false);
   const { colors } = useTheme()
   const styles = createStyles(colors)
+  const globalStyles = createGlobalStyles(colors)
 
   useEffect(() => {
     if (currentRide?.driver_id) {

@@ -1,9 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { useTheme } from '@hooks/useTheme'
 
-const { colors } = useTheme()
-
-export const globalStyles = StyleSheet.create({
+export const createGlobalStyles = (colors: any) =>
+  StyleSheet.create({
   // Containers
   container: {
     flex: 1,

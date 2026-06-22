@@ -15,7 +15,7 @@ import Card from '@components/Card';
 import { useRideStore } from '@store/rideStore';
 import { useAuthStore } from '@store/authStore';
 import { useTheme } from '@hooks/useTheme';
-import { globalStyles } from '@styles/globalStyles';
+import { createGlobalStyles } from '@styles/globalStyles';
 
 export default function DriverHistoryScreen() {
   const router = useRouter();
@@ -24,6 +24,7 @@ export default function DriverHistoryScreen() {
   const [refreshing, setRefreshing] = React.useState(false);
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const globalStyles = createGlobalStyles(colors)
 
   useEffect(() => {
     if (user?.id) {

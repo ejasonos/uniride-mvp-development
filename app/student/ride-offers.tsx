@@ -15,12 +15,13 @@ import Button from '@components/Button';
 import Card from '@components/Card';
 import { useRideStore } from '@store/rideStore';
 import { useTheme } from '@hooks/useTheme'
-import { globalStyles } from '@styles/globalStyles'
+import { createGlobalStyles } from '@styles/globalStyles'
 
 export default function RideOffersScreen() {
   const router = useRouter();
   const { colors } = useTheme()
   const styles = createStyles(colors)
+  const globalStyles = createGlobalStyles(colors)
   const { rideRequestId } = useLocalSearchParams<{ rideRequestId?: string | string[] }>();
   const resolvedRideRequestId = Array.isArray(rideRequestId) ? rideRequestId[0] : rideRequestId;
   const { currentRideRequest, rideOffers, isLoading, fetchRideOffers } = useRideStore();

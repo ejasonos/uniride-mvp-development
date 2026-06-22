@@ -20,7 +20,7 @@ import { useRideStore } from '@store/rideStore';
 import { useChatStore } from '@store/chatStore';
 import { Controller } from 'react-hook-form';
 import { useTheme } from '@hooks/useTheme';
-import { globalStyles } from '@styles/globalStyles'
+import { createGlobalStyles } from '@styles/globalStyles'
 
 const offerSchema = z.object({
   offeredPrice: z.string(),
@@ -38,6 +38,7 @@ export default function SubmitOfferScreen() {
   const { createConversation } = useChatStore();
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const globalStyles = createGlobalStyles(colors)
 
   const {
     control,

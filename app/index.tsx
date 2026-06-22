@@ -8,10 +8,12 @@ import {
 import { router } from 'expo-router';
 import { useAuthStore } from '@store/authStore';
 import { useTheme } from '@hooks/useTheme'
+import { createGlobalStyles } from '@styles/globalStyles'
 
 export default function Index() {
   const { colors } = useTheme()
   const styles = createStyles(colors)
+  const globalStyles = createGlobalStyles(colors)
   const {
     initializeAuth,
     isInitialized,
@@ -42,7 +44,7 @@ export default function Index() {
   }, [isInitialized, user]);
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyles.container}>
       <Text style={styles.logo}>UniRide</Text>
 
       <ActivityIndicator

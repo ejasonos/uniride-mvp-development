@@ -17,7 +17,7 @@ import { useAuthStore } from '@store/authStore';
 import { useChatStore } from '@store/chatStore';
 import { useRideStore } from '@store/rideStore';
 import { useTheme } from '@hooks/useTheme'
-import { globalStyles } from '@styles/globalStyles';
+import { createGlobalStyles } from '@styles/globalStyles';
 
 export default function NegotiationChatScreen() {
   const router = useRouter();
@@ -40,6 +40,7 @@ export default function NegotiationChatScreen() {
 
   const { colors } = useTheme()
   const styles = createStyles(colors)
+  const globalStyles = createGlobalStyles(colors)
 
   useEffect(() => {
     if (convo?.id) subscribeToMessages(convo.id);

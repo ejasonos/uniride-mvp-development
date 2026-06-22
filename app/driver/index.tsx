@@ -17,7 +17,7 @@ import { useAuthStore } from '@store/authStore';
 import { useRideStore } from '@store/rideStore';
 import { useLocationStore } from '@store/locationStore';
 import { useTheme } from '@hooks/useTheme';
-import { globalStyles } from '@/styles/globalStyles';
+import { createGlobalStyles } from '@/styles/globalStyles';
 
 export default function DriverHomeScreen() {
   const router = useRouter();
@@ -28,6 +28,7 @@ export default function DriverHomeScreen() {
   const [isOnline, setIsOnline] = useState(false);
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const globalStyles = createGlobalStyles(colors)
 
   useEffect(() => {
     if (!isOnline) return;

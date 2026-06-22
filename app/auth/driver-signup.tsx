@@ -15,7 +15,7 @@ import Input from '@components/Input';
 import { useAuthStore } from '@store/authStore';
 import { useTheme } from '@hooks/useTheme';
 import { VEHICLE_TYPES } from '@constants/index';
-import { globalStyles } from '@styles/globalStyles';
+import { createGlobalStyles } from '@styles/globalStyles';
 
 export default function DriverSignUpScreen() {
   const router = useRouter();
@@ -31,6 +31,7 @@ export default function DriverSignUpScreen() {
   const { signUp, isLoading } = useAuthStore();
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const globalStyles = createGlobalStyles(colors)
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};

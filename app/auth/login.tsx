@@ -15,7 +15,7 @@ import Input from '@components/Input';
 import { useAuthStore } from '@store/authStore';
 import ThemeToggle from '@/components/ThemeToggle';
 import { useTheme } from '@hooks/useTheme';
-import { globalStyles } from '@/styles/globalStyles';
+import { createGlobalStyles } from '@/styles/globalStyles';
 
 export default function LoginScreeen() {
   const router = useRouter();
@@ -25,6 +25,7 @@ export default function LoginScreeen() {
   const { signIn, isLoading } = useAuthStore();
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const globalStyles = createGlobalStyles(colors)
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};

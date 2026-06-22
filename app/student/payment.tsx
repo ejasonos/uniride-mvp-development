@@ -15,11 +15,12 @@ import Card from '@components/Card';
 import { useRideStore } from '@store/rideStore';
 import { useAuthStore } from '@store/authStore';
 import { useTheme } from '@hooks/useTheme'
-import { globalStyles } from '@styles/globalStyles';
+import { createGlobalStyles } from '@styles/globalStyles';
 
 export default function PaymentScreen() {
   const { colors } = useTheme()
   const styles = createStyles(colors)
+  const globalStyles = createGlobalStyles(colors)
   const router = useRouter();
   const { currentRide, createPayment, updatePaymentStatus, updateRideStatus, isLoading } =
     useRideStore();

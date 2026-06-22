@@ -16,7 +16,7 @@ import { useRideStore } from '@store/rideStore';
 import { useLocationStore } from '@store/locationStore';
 
 import { useTheme } from '@hooks/useTheme'
-import { globalStyles } from '@styles/globalStyles'
+import { createGlobalStyles } from '@styles/globalStyles'
 
 import ThemeToggle from '@components/ThemeToggle';
 import { UNIBEN_REGION } from '@constants/maps';
@@ -35,6 +35,7 @@ export default function StudentHomeScreen() {
 
   const { colors } = useTheme()
   const styles = createStyles(colors)
+  const globalStyles = createGlobalStyles(colors)
 
   return (
     <SafeAreaView style={globalStyles.container}>
