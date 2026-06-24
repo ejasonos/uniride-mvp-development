@@ -9,16 +9,18 @@ export const LIGHT_THEME = {
   TEXT_PRIMARY: '#000000',
   TEXT_SECONDARY: '#666666',
 
-  BORDER: '#E0E0E0',
+  BORDER: '#E5E7EB',
 
   ERROR: '#D32F2F',
   SUCCESS: '#388E3C',
 
   GRAY: '#E0E0E0',
   DARK_GRAY: '#666666',
-  
+
   DARK: '#000000',
   LIGHT_GRAY: '#F5F5F5',
+
+  BACKGROUND_SECONDARY: '#F8FAFC',
 };
 
 export const DARK_THEME = {
@@ -36,12 +38,14 @@ export const DARK_THEME = {
 
   ERROR: '#FF5A5A',
   SUCCESS: '#4CAF50',
-  
+
   GRAY: '#E0E0E0',
   DARK_GRAY: '#666666',
 
   DARK: '#000000',
   LIGHT_GRAY: '#F5F5F5',
+
+  BACKGROUND_SECONDARY: '#1F1F1F',
 };
 
 // Supabase

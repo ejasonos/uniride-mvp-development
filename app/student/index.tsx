@@ -39,17 +39,59 @@ export default function StudentHomeScreen() {
 
   return (
     <SafeAreaView style={globalStyles.container}>
+      {/* HERO HEADER */}
+      <View style={styles.heroContainer}>
 
-      {/* HEADER */}
-      <View style={styles.header}>
-        <Text style={styles.greeting}>Hi, {user?.full_name}</Text>
+        <View style={styles.topBar}>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <ThemeToggle />
-          <TouchableOpacity onPress={signOut}>
-            <Text style={styles.logout}>Logout</Text>
-          </TouchableOpacity>
+          <View>
+            <Text style={styles.greeting}>
+              Good Morning
+            </Text>
+
+            <Text style={styles.userName}>
+              {user?.full_name || 'Student'}
+            </Text>
+          </View>
+
+          <View style={styles.headerActions}>
+
+            <TouchableOpacity style={styles.iconButton}>
+              <ThemeToggle />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.profileButton}
+              onPress={signOut}
+            >
+              <Text style={styles.profileInitial}>
+                {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+              </Text>
+            </TouchableOpacity>
+
+          </View>
+
         </View>
+
+        <Text style={styles.heroTitle}>
+          Where are you going?
+        </Text>
+
+        <Text style={styles.heroSubtitle}>
+          Fast campus rides in minutes
+        </Text>
+
+        <TouchableOpacity
+          style={styles.searchCard}
+          onPress={() => go('/student/ride-request')}
+        >
+          <Text style={styles.searchIcon}>🔍</Text>
+
+          <Text style={styles.searchText}>
+            Enter destination
+          </Text>
+        </TouchableOpacity>
+
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -143,10 +185,127 @@ const createStyles = (colors: any) => StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+
+  modeIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    backgroundColor: colors.CARD || colors.SECONDARY,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+
+    elevation: 4,
+  },
+
+  profileButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    backgroundColor: colors.PRIMARY,
+  },
+  heroContainer: {
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 28,
+  },
+
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 28,
+  },
+
   greeting: {
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: 13,
+    color: colors.TEXT_SECONDARY,
+    fontWeight: '500',
+  },
+
+  userName: {
+    fontSize: 24,
+    fontWeight: '800',
     color: colors.TEXT_PRIMARY,
+    marginTop: 2,
+  },
+
+  iconButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.CARD || '#FFFFFF',
+  },
+
+  profileInitial: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+    fontSize: 16,
+  },
+
+  heroTitle: {
+    fontSize: 30,
+    fontWeight: '800',
+    color: colors.TEXT_PRIMARY,
+    lineHeight: 40,
+  },
+
+  heroSubtitle: {
+    marginTop: 8,
+    fontSize: 15,
+    color: colors.TEXT_SECONDARY,
+    marginBottom: 22,
+  },
+
+  searchCard: {
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: colors.CARD || '#FFFFFF',
+
+    flexDirection: 'row',
+    alignItems: 'center',
+
+    paddingHorizontal: 18,
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 6,
+  },
+
+  searchIcon: {
+    fontSize: 20,
+    marginRight: 12,
+  },
+
+  searchText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.TEXT_SECONDARY,
   },
   subText: {
     fontSize: 13,
@@ -156,6 +315,9 @@ const createStyles = (colors: any) => StyleSheet.create({
   logout: {
     color: '#D32F2F',
     fontWeight: '600',
+  },
+  hero: {
+    marginBottom: 10,
   },
 
   /* CONTENT */
@@ -169,6 +331,14 @@ const createStyles = (colors: any) => StyleSheet.create({
     padding: 16,
     borderRadius: 14,
     marginBottom: 14,
+  },
+  card: {
+    backgroundColor: colors.CARD,
+    borderRadius: 24,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    elevation: 8,
   },
   cardTitle: {
     fontSize: 16,
@@ -194,11 +364,9 @@ const createStyles = (colors: any) => StyleSheet.create({
 
   /* MAP (low visual priority) */
   mapCard: {
-    height: 180,
-    borderRadius: 14,
+    height: 380,
+    borderRadius: 24,
     overflow: 'hidden',
-    marginBottom: 16,
-    backgroundColor: '#EDEFF3',
   },
   map: {
     flex: 1,
@@ -208,6 +376,7 @@ const createStyles = (colors: any) => StyleSheet.create({
   chipsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    marginTop: 5,
     gap: 10,
   },
   chip: {
