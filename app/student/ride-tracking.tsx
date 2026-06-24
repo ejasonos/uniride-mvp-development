@@ -7,6 +7,7 @@ import {
   Alert,
   ActivityIndicator,
   ScrollView,
+  TouchableOpacity
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import MapView, { Marker } from 'react-native-maps';
@@ -69,77 +70,111 @@ export default function RideTrackingScreen() {
 
   return (
     <SafeAreaView style={globalStyles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Tracking Driver</Text>
-        <Text style={styles.status}>{currentRide?.status.toUpperCase()}</Text>
-      </View>
 
-      <View style={styles.mapContainer}>
-        {mapReady ? (
-          <MapView
-            style={styles.map}
-            initialRegion={initialRegion}
-            onMapReady={() => setMapReady(true)}
-          >
-            {driverLocation && (
-              <Marker
-                coordinate={{
-                  latitude: driverLocation.latitude,
-                  longitude: driverLocation.longitude,
-                }}
-                title="Driver Location"
-                description="Your driver is here"
-              />
-            )}
-          </MapView>
-        ) : (
-          <View style={[globalStyles.columnCenter, styles.mapPlaceholder]}>
-            <ActivityIndicator color={colors.PRIMARY} />
-            <Text style={globalStyles.bodySmall}>Loading map...</Text>
+      {/* FULLSCREEN MAP */}
+
+      <View style={styles.mapWrapper}>
+        <MapView
+          style={styles.map}
+          initialRegion={initialRegion}
+          onMapReady={() => setMapReady(true)}
+        >
+          {driverLocation && (
+            <Marker
+              coordinate={{
+                latitude: driverLocation.latitude,
+                longitude: driverLocation.longitude,
+              }}
+            />
+          )}
+        </MapView>
+
+        {!mapReady && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color={colors.PRIMARY} />
           </View>
         )}
       </View>
 
-      <ScrollView style={styles.content}>
-        <Card style={styles.card}>
-          <Text style={globalStyles.heading3}>Ride Details</Text>
+      {/* FLOATING STATUS */}
 
-          <View style={styles.detailRow}>
-            <Text style={globalStyles.bodyMedium}>Status:</Text>
-            <Text style={styles.statusBadge}>{currentRide?.status}</Text>
-          </View>
+      <View style={styles.statusPill}>
+        <View style={styles.liveDot} />
 
-          <View style={styles.detailRow}>
-            <Text style={globalStyles.bodyMedium}>Price Agreed:</Text>
-            <Text style={styles.price}>₦{currentRide?.agreed_price.toLocaleString()}</Text>
-          </View>
+        <Text style={styles.statusPillText}>
+          {currentRide?.status?.toUpperCase()}
+        </Text>
+      </View>
 
-          {driverLocation && (
-            <View style={styles.detailRow}>
-              <Text style={globalStyles.bodyMedium}>Driver Location:</Text>
-              <Text style={globalStyles.bodySmall}>
-                {driverLocation.latitude.toFixed(4)}, {driverLocation.longitude.toFixed(4)}
-              </Text>
-            </View>
-          )}
+      {/* BOTTOM SHEET */}
 
-          <View style={styles.detailRow}>
-            <Text style={globalStyles.bodyMedium}>Started:</Text>
-            <Text style={globalStyles.bodySmall}>
-              {new Date(currentRide?.created_at || '').toLocaleTimeString()}
+      <View style={styles.bottomSheet}>
+
+        <Text style={styles.arrivalTitle}>
+          Driver arriving
+        </Text>
+
+        <Text style={styles.arrivalTime}>
+          3 min away
+        </Text>
+
+        <View style={styles.divider} />
+
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>
+            Agreed Fare
+          </Text>
+
+          <Text style={styles.fareText}>
+            ₦{currentRide?.agreed_price?.toLocaleString()}
+          </Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>
+            Ride Started
+          </Text>
+
+          <Text style={styles.infoValue}>
+            {new Date(
+              currentRide?.created_at || ''
+            ).toLocaleTimeString()}
+          </Text>
+        </View>
+
+        {driverLocation && (
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>
+              Driver Location
+            </Text>
+
+            <Text style={styles.infoValue}>
+              {driverLocation.latitude.toFixed(4)},
+              {' '}
+              {driverLocation.longitude.toFixed(4)}
             </Text>
           </View>
-        </Card>
+        )}
 
-        <View style={styles.actionContainer}>
-          <Button
-            title={isLoading ? 'Processing...' : 'Complete Ride'}
-            onPress={handleCompleteRide}
-            variant="primary"
-            disabled={isLoading || currentRide?.status === 'completed'}
-          />
-        </View>
-      </ScrollView>
+        <TouchableOpacity
+          style={[
+            styles.completeButton,
+            currentRide?.status === 'completed' &&
+            styles.completeButtonDisabled,
+          ]}
+          onPress={handleCompleteRide}
+          disabled={
+            currentRide?.status === 'completed' ||
+            isLoading
+          }
+        >
+          <Text style={styles.completeButtonText}>
+            Complete Ride
+          </Text>
+        </TouchableOpacity>
+
+      </View>
+
     </SafeAreaView>
   );
 };
@@ -165,9 +200,6 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   mapContainer: {
     height: 300,
-  },
-  map: {
-    flex: 1,
   },
   mapPlaceholder: {
     flex: 1,
@@ -205,5 +237,147 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   actionContainer: {
     paddingVertical: 24,
+  },
+  mapWrapper: {
+    flex: 1,
+  },
+  map: {
+    flex: 1,
+  },
+
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.7)',
+  },
+
+  statusPill: {
+    position: 'absolute',
+    top: 70,
+    alignSelf: 'center',
+
+    flexDirection: 'row',
+    alignItems: 'center',
+
+    backgroundColor: '#FFF',
+
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+
+    borderRadius: 999,
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+
+  liveDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#22C55E',
+    marginRight: 8,
+  },
+
+  statusPillText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.TEXT_PRIMARY,
+  },
+
+  bottomSheet: {
+    position: 'absolute',
+
+    left: 0,
+    right: 0,
+    bottom: 0,
+
+    backgroundColor: colors.CARD,
+
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 34,
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -8,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 18,
+    elevation: 20,
+  },
+
+  arrivalTitle: {
+    fontSize: 14,
+    color: colors.TEXT_SECONDARY,
+  },
+
+  arrivalTime: {
+    marginTop: 6,
+
+    fontSize: 34,
+    fontWeight: '800',
+
+    color: colors.TEXT_PRIMARY,
+  },
+
+  divider: {
+    height: 1,
+    backgroundColor: colors.BORDER,
+    marginVertical: 20,
+  },
+
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
+
+  infoLabel: {
+    color: colors.TEXT_SECONDARY,
+  },
+
+  infoValue: {
+    color: colors.TEXT_PRIMARY,
+    fontWeight: '600',
+  },
+
+  fareText: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.PRIMARY,
+  },
+
+  completeButton: {
+    marginTop: 18,
+
+    height: 58,
+
+    borderRadius: 18,
+
+    backgroundColor: colors.PRIMARY,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  completeButtonDisabled: {
+    opacity: 0.5,
+  },
+
+  completeButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '800',
   },
 });

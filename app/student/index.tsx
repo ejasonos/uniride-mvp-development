@@ -233,6 +233,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 28,
+    marginTop: 20
   },
 
   greeting: {

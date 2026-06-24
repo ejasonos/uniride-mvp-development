@@ -86,24 +86,70 @@ export default function DriverHomeScreen() {
     <SafeAreaView style={globalStyles.container}>
 
       {/* HEADER / DRIVER STATUS */}
-      <View style={styles.header}>
+      <View style={styles.topBar}>
+
         <View>
-          <Text style={styles.greeting}>Hi, {user?.full_name}</Text>
-          <Text style={styles.statusText}>
-            {isOnline ? 'Online • Receiving requests' : 'Offline'}
+
+          <Text style={styles.welcome}>
+            Good Morning 👋
           </Text>
+
+          <Text style={styles.driverName}>
+            {user?.full_name || 'Driver'}
+          </Text>
+
         </View>
 
-        <Switch
-          value={isOnline}
-          onValueChange={setIsOnline}
-          trackColor={{ false: colors.GRAY, true: colors.ACCENT }}
-          thumbColor={isOnline ? colors.PRIMARY : colors.LIGHT_GRAY}
-        />
+        <TouchableOpacity
+          style={[
+            styles.onlineBadge,
+            {
+              backgroundColor: isOnline
+                ? '#D7F5E7'
+                : '#FFE8E8',
+            },
+          ]}
+        >
+          <Text
+            style={{
+              color: isOnline
+                ? '#0F9D58'
+                : '#D93025',
+              fontWeight: '700',
+            }}
+          >
+            {isOnline ? 'ONLINE' : 'OFFLINE'}
+          </Text>
+        </TouchableOpacity>
+
       </View>
+      <View style={styles.heroCard}>
 
+        <Text style={styles.heroTitle}>
+          {isOnline
+            ? "You're Online"
+            : "Go Online"}
+        </Text>
+
+        <Text style={styles.heroSubtitle}>
+          {isOnline
+            ? `${rideRequests.length} ride requests nearby`
+            : "Start receiving ride requests"}
+        </Text>
+
+        <TouchableOpacity
+          style={styles.heroButton}
+          onPress={() => setIsOnline(!isOnline)}
+        >
+          <Text style={styles.heroButtonText}>
+            {isOnline
+              ? 'Go Offline'
+              : 'Go Online'}
+          </Text>
+        </TouchableOpacity>
+
+      </View>
       <ScrollView contentContainerStyle={styles.content}>
-
         {/* MAP PREVIEW (small, not dominant) */}
         {isOnline && (
           <View style={styles.mapCard}>
@@ -159,19 +205,27 @@ export default function DriverHomeScreen() {
         )}
 
         {/* ACTIONS */}
-        <View style={styles.footer}>
+        <View style={styles.footerActions}>
+
           <TouchableOpacity
+            style={styles.secondaryButton}
             onPress={() => router.push('/driver/history')}
-            style={styles.historyBtn}
           >
-            <Text style={styles.historyText}>View Ride History</Text>
+            <Text style={styles.secondaryButtonText}>
+              Ride History
+            </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={signOut} style={styles.logoutBtn}>
-            <Text style={styles.logoutText}>Logout</Text>
+          <TouchableOpacity
+            style={styles.dangerButton}
+            onPress={() => router.push('/')}
+          >
+            <Text style={styles.dangerButtonText}>
+              Logout
+            </Text>
           </TouchableOpacity>
+
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -188,11 +242,6 @@ const createStyles = (colors: any) =>
       justifyContent: 'space-between',
       alignItems: 'center',
     },
-    greeting: {
-      color: colors.SECONDARY,
-      fontSize: 18,
-      fontWeight: '700',
-    },
     statusText: {
       color: colors.SECONDARY,
       fontSize: 12,
@@ -206,12 +255,6 @@ const createStyles = (colors: any) =>
     },
 
     /* MAP */
-    mapCard: {
-      height: 180,
-      borderRadius: 12,
-      overflow: 'hidden',
-      marginBottom: 16,
-    },
     map: {
       flex: 1,
     },
@@ -225,12 +268,6 @@ const createStyles = (colors: any) =>
     },
 
     /* REQUEST CARD */
-    requestCard: {
-      backgroundColor: '#fff',
-      padding: 14,
-      borderRadius: 12,
-      marginBottom: 12,
-    },
     requestTopRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -313,5 +350,211 @@ const createStyles = (colors: any) =>
     logoutText: {
       color: '#C62828',
       fontWeight: '600',
+    },
+    topBar: {
+      marginTop: 20,
+      paddingHorizontal: 24,
+      paddingTop: 20,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+
+    welcome: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: colors.TEXT_SECONDARY,
+    },
+
+    driverName: {
+      fontSize: 28,
+      fontWeight: '800',
+      color: colors.TEXT_PRIMARY,
+      marginTop: 4,
+    },
+
+    onlineBadge: {
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 999,
+    },
+
+    heroCard: {
+      margin: 24,
+      padding: 24,
+      borderRadius: 24,
+      backgroundColor: colors.PRIMARY,
+    },
+
+    heroTitle: {
+      fontSize: 26,
+      fontWeight: '800',
+      color: '#FFF',
+    },
+
+    heroSubtitle: {
+      marginTop: 8,
+      color: 'rgba(255,255,255,0.8)',
+    },
+
+    heroButton: {
+      marginTop: 20,
+      backgroundColor: '#FFF',
+      borderRadius: 16,
+      paddingVertical: 14,
+      alignItems: 'center',
+    },
+
+    heroButtonText: {
+      color: colors.PRIMARY,
+      fontWeight: '800',
+    },
+
+    mapCard: {
+      height: 220,
+      borderRadius: 24,
+      overflow: 'hidden',
+      marginHorizontal: 24,
+      marginBottom: 24,
+    },
+
+    requestCard: {
+      backgroundColor: colors.CARD,
+      marginBottom: 16,
+      borderRadius: 24,
+      padding: 20,
+    },
+
+    requestHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 20,
+    },
+
+    requestBadge: {
+      backgroundColor: '#EAF6FF',
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 999,
+    },
+
+    requestBadgeText: {
+      color: '#0066FF',
+      fontWeight: '700',
+      fontSize: 12,
+    },
+
+    distanceText: {
+      fontWeight: '700',
+    },
+
+    routeContainer: {
+      marginBottom: 20,
+    },
+
+    routeRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+
+    pickupDot: {
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      backgroundColor: '#0F9D58',
+    },
+
+    destinationDot: {
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      backgroundColor: '#D93025',
+    },
+
+    routeLine: {
+      width: 2,
+      height: 28,
+      backgroundColor: colors.GRAY,
+      marginLeft: 5,
+      marginVertical: 4,
+    },
+
+    locationText: {
+      marginLeft: 12,
+      fontWeight: '600',
+      fontSize: 15,
+    },
+
+    offerButton: {
+      backgroundColor: colors.PRIMARY,
+      borderRadius: 16,
+      paddingVertical: 14,
+      alignItems: 'center',
+    },
+
+    offerButtonText: {
+      color: '#FFF',
+      fontWeight: '700',
+    },
+
+    quickActions: {
+      flexDirection: 'row',
+      gap: 12,
+      marginTop: 24,
+    },
+
+    actionCard: {
+      flex: 1,
+      padding: 20,
+      borderRadius: 20,
+      backgroundColor: colors.CARD,
+      alignItems: 'center',
+    },
+
+    actionIcon: {
+      fontSize: 24,
+    },
+
+    actionLabel: {
+      marginTop: 10,
+      fontWeight: '700',
+    },
+    footerActions: {
+      flexDirection: 'row',
+      gap: 12,
+      marginTop: 24,
+      marginBottom: 32,
+    },
+
+    secondaryButton: {
+      flex: 1,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: colors.CARD,
+      borderWidth: 1,
+      borderColor: colors.BORDER || '#E5E7EB',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    secondaryButtonText: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: colors.TEXT_PRIMARY,
+    },
+
+    dangerButton: {
+      flex: 1,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: '#FFF1F2',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    dangerButtonText: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: '#DC2626',
     },
   });

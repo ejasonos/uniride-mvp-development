@@ -263,7 +263,7 @@ const createStyles = (colors: any) =>
 
     scrollContent: {
       paddingHorizontal: 20,
-      paddingBottom: 40,
+      paddingBottom: 40
     },
 
     card: {
