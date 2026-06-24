@@ -182,7 +182,7 @@ const createStyles = (colors: any) =>
       color: colors.TEXT_SECONDARY,
     },
     signUpButton: {
-      paddingVertical: 0,
+      paddingVertical: 5,
       paddingHorizontal: 15,
       marginVertical: 0,
     },

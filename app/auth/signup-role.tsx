@@ -163,8 +163,8 @@ const createStyles = (colors: any) =>
       color: colors.TEXT_SECONDARY,
     },
     signInButton: {
-      paddingVertical: 0,
-      paddingHorizontal: 2,
+      paddingVertical: 5,
+      paddingHorizontal: 15,
       marginVertical: 0,
     },
     signInText: {

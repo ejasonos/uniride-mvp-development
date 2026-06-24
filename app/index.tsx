@@ -44,7 +44,7 @@ export default function Index() {
   }, [isInitialized, user]);
 
   return (
-    <View style={globalStyles.container}>
+    <View style={styles.container}>
       <Text style={styles.logo}>UniRide</Text>
 
       <ActivityIndicator
