@@ -328,7 +328,7 @@ const createStyles = (colors: any) => StyleSheet.create({
 
   /* PRIMARY CARD (Uber-style action focus) */
   primaryCard: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.ACCENT,
     padding: 16,
     borderRadius: 14,
     marginBottom: 14,
@@ -381,7 +381,7 @@ const createStyles = (colors: any) => StyleSheet.create({
     gap: 10,
   },
   chip: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.SECONDARY,
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 20,
@@ -391,6 +391,6 @@ const createStyles = (colors: any) => StyleSheet.create({
   chipText: {
     fontSize: 13,
     fontWeight: '600',
-    color: colors.TEXT_PRIMARY,
+    color: colors.TEXT_PRIMARY
   },
 });

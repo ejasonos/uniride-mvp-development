@@ -82,7 +82,7 @@ export default function NegotiationChatScreen() {
     const mine = item.sender_id === user?.id;
 
     return (
-      <View style={[globalStyles.container, styles.msgRow, mine && styles.msgRowRight]}>
+      <View style={[globalStyles.container, styles.msgRow, mine && styles.msgRowRight, {marginTop: 20}]}>
         <View style={[styles.bubble, mine && styles.bubbleMine]}>
           <Text style={[styles.msgText, mine && styles.msgTextMine]}>
             {item.message}
@@ -101,12 +101,37 @@ export default function NegotiationChatScreen() {
   return (
     <SafeAreaView style={globalStyles.container}>
 
-      {/* TOP CONTEXT BAR (Uber-style) */}
-      <View style={styles.offerBar}>
-        <Text style={styles.offerLabel}>Driver Offer</Text>
-        <Text style={styles.offerPrice}>
-          ₦{offer?.offered_price?.toLocaleString()}
-        </Text>
+      {/* TOP CONTEXT BAR */}
+      <View style={styles.offerCard}>
+        <Text style={{color: 'black', fontSize: 20}}>Offer received</Text>
+        <View style={styles.offerTopRow}>
+          <View>
+            <Text style={styles.offerLabel}>
+              Driver Offer
+            </Text>
+
+            <Text style={styles.offerPrice}>
+              ₦{offer?.offered_price?.toLocaleString()}
+            </Text>
+          </View>
+
+          <View style={styles.offerBadge}>
+            <Text style={styles.offerBadgeText}>
+              Best Match
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.offerMetaRow}>
+          <Text style={styles.offerMeta}>
+            🚗 Campus Driver
+          </Text>
+
+          <Text style={styles.offerMeta}>
+            • 3 mins away
+          </Text>
+        </View>
+
       </View>
 
       <KeyboardAvoidingView
@@ -132,38 +157,61 @@ export default function NegotiationChatScreen() {
         />
 
         {/* INPUT (Claude-style minimal floating bar) */}
-        <View style={styles.inputBar}>
-          <TextInput
-            value={text}
-            onChangeText={setText}
-            placeholder="Message driver..."
-            placeholderTextColor="#999"
-            style={styles.input}
-            multiline
-          />
+        <View style={styles.composerWrapper}>
 
-          <TouchableOpacity
-            onPress={send}
-            disabled={!text.trim()}
-            style={[styles.sendBtn, !text.trim() && styles.disabled]}
-          >
-            <Text style={styles.sendText}>Send</Text>
-          </TouchableOpacity>
+          <View style={styles.composer}>
+
+            <TextInput
+              value={text}
+              onChangeText={setText}
+              placeholder="Negotiate price or ask a question..."
+              placeholderTextColor="#8A8A8A"
+              style={styles.input}
+              multiline
+            />
+
+            <TouchableOpacity
+              onPress={send}
+              disabled={!text.trim()}
+              style={[
+                styles.sendButton,
+                !text.trim() && styles.sendButtonDisabled,
+              ]}
+            >
+              <Text style={styles.sendIcon}>
+                ↑
+              </Text>
+            </TouchableOpacity>
+
+          </View>
+
         </View>
 
         {/* DECISION CTA */}
-        <View style={styles.ctaBar}>
+        <View style={styles.bottomActionCard}>
+
+          <Text style={styles.bottomTitle}>
+            Ready to ride?
+          </Text>
+
+          <Text style={styles.bottomSubtitle}>
+            Accept this offer and begin your trip.
+          </Text>
+
           <TouchableOpacity
             onPress={acceptOffer}
             disabled={loading}
             style={styles.acceptBtn}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color="#FFF" />
             ) : (
-              <Text style={styles.acceptText}>Accept Offer</Text>
+              <Text style={styles.acceptText}>
+                Accept Ride Offer
+              </Text>
             )}
           </TouchableOpacity>
+
         </View>
 
       </KeyboardAvoidingView>
@@ -184,18 +232,8 @@ const createStyles = (colors: any) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: 20
   },
-  offerLabel: {
-    color: '#fff',
-    fontSize: 13,
-    opacity: 0.9,
-  },
-  offerPrice: {
-    color: colors.ACCENT,
-    fontSize: 16,
-    fontWeight: '700',
-  },
-
   /* CHAT */
   chat: {
     padding: 14,
@@ -263,15 +301,6 @@ const createStyles = (colors: any) => StyleSheet.create({
     alignItems: 'flex-end',
     gap: 8,
   },
-  input: {
-    flex: 1,
-    fontSize: 14,
-    maxHeight: 100,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: '#F2F3F5',
-    borderRadius: 12,
-  },
   sendBtn: {
     backgroundColor: colors.PRIMARY,
     paddingVertical: 10,
@@ -291,15 +320,150 @@ const createStyles = (colors: any) => StyleSheet.create({
     padding: 12,
     backgroundColor: '#fff',
   },
-  acceptBtn: {
-    backgroundColor: colors.ACCENT,
-    paddingVertical: 14,
-    borderRadius: 12,
+  offerCard: {
+    marginHorizontal: 20,
+    marginTop: 16,
+    padding: 20,
+    borderRadius: 24,
+
+    backgroundColor: colors.CARD || '#FFFFFF',
+
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.06)',
+  },
+
+  offerTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
+
+  offerLabel: {
+    fontSize: 13,
+    color: colors.TEXT_SECONDARY,
+  },
+
+  offerPrice: {
+    fontSize: 32,
+    fontWeight: '800',
+    marginTop: 4,
+    color: colors.TEXT_PRIMARY,
+  },
+
+  offerBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 999,
+
+    backgroundColor: 'rgba(34,197,94,0.15)',
+  },
+
+  offerBadgeText: {
+    color: '#16A34A',
+    fontWeight: '700',
+    fontSize: 12,
+  },
+
+  offerMetaRow: {
+    flexDirection: 'row',
+    marginTop: 12,
+  },
+
+  offerMeta: {
+    color: colors.TEXT_SECONDARY,
+    fontSize: 13,
+  },
+
+  composerWrapper: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+
+  composer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+
+    borderRadius: 28,
+
+    backgroundColor: colors.CARD || '#FFF',
+
+    padding: 8,
+
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.08)',
+  },
+
+  input: {
+    flex: 1,
+
+    minHeight: 48,
+    maxHeight: 120,
+
+    fontSize: 15,
+
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+
+    color: colors.TEXT_PRIMARY,
+  },
+
+  sendButton: {
+    width: 42,
+    height: 42,
+
+    borderRadius: 21,
+
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    backgroundColor: colors.PRIMARY,
+  },
+
+  sendButtonDisabled: {
+    opacity: 0.35,
+  },
+
+  sendIcon: {
+    color: '#FFF',
+    fontWeight: '800',
+    fontSize: 18,
+  },
+
+  bottomActionCard: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+
+    backgroundColor: colors.BACKGROUND,
+  },
+
+  bottomTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+
+    color: colors.TEXT_PRIMARY,
+  },
+
+  bottomSubtitle: {
+    marginTop: 4,
+    marginBottom: 16,
+
+    color: colors.TEXT_SECONDARY,
+  },
+
+  acceptBtn: {
+    height: 58,
+
+    borderRadius: 999,
+
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    backgroundColor: '#111111',
+  },
+
   acceptText: {
+    color: '#FFFFFF',
     fontWeight: '700',
     fontSize: 15,
-    color: colors.TEXT_PRIMARY,
   },
 });
