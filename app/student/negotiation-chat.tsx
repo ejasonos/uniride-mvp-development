@@ -82,7 +82,7 @@ export default function NegotiationChatScreen() {
     const mine = item.sender_id === user?.id;
 
     return (
-      <View style={[globalStyles.container, styles.msgRow, mine && styles.msgRowRight, {marginTop: 20}]}>
+      <View style={[globalStyles.container, styles.msgRow, mine && styles.msgRowRight]}>
         <View style={[styles.bubble, mine && styles.bubbleMine]}>
           <Text style={[styles.msgText, mine && styles.msgTextMine]}>
             {item.message}
@@ -102,8 +102,7 @@ export default function NegotiationChatScreen() {
     <SafeAreaView style={globalStyles.container}>
 
       {/* TOP CONTEXT BAR */}
-      <View style={styles.offerCard}>
-        <Text style={{color: 'black', fontSize: 20}}>Offer received</Text>
+      <View style={[styles.offerCard]}>
         <View style={styles.offerTopRow}>
           <View>
             <Text style={styles.offerLabel}>
@@ -178,8 +177,8 @@ export default function NegotiationChatScreen() {
                 !text.trim() && styles.sendButtonDisabled,
               ]}
             >
-              <Text style={styles.sendIcon}>
-                ↑
+              <Text style={[styles.sendIcon, {fontSize: 10}]}>
+                Send
               </Text>
             </TouchableOpacity>
 
@@ -322,7 +321,7 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   offerCard: {
     marginHorizontal: 20,
-    marginTop: 16,
+    marginTop: 40,
     padding: 20,
     borderRadius: 24,
 
